@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "./node_modules/.bin/webpack --config webpack.config.production.js",
-    "stylus": "stylus -u autoprefixer-stylus --watch 'stylus/index.styl' --out 'dist/index.css'",
-    "lint": "./node_modules/.bin/eslint ."
+    "stylus": "stylus -u autoprefixer-stylus --watch 'stylus/index.styl' --out 'dist/index.css'"
   },
   "repository": {
     "type": "git",
@@ -45,7 +44,6 @@
   },
   "devDependencies": {
     "babel-core": "^6.3.21",
-    "babel-eslint": "^5.0.0-beta6",
     "babel-loader": "^6.2.0",
     "babel-plugin-react-transform": "^2.0.0-beta1",
     "babel-plugin-transform-runtime": "^6.3.13",
@@ -53,8 +51,6 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "css-loader": "^0.23.1",
-    "eslint": "^0.21.2",
-    "eslint-plugin-react": "^2.3.0",
     "react-transform-hmr": "^1.0.1",
     "style-loader": "^0.13.0",
     "webpack": "^1.8.4",

@@ -1,10 +1,21 @@
 .Card
-  width: 150px
-  border: 1px solid #d0d0d0
-  border-radius: 3px
-  overflow-y: hidden
   display: flex
   flex-direction: column
+  background: #fff
+  &-body
+    width: 150px
+    border: 1px solid $card-border-color
+    border-radius: $card-border-radius
+    overflow-y: hidden
+
+    display: inline-flex
+    flex-direction: column
+
+  &-combat-pair
+    padding: 4px
+    margin: 4px 0
+    background: #f0f0f0
+    border-radius: $card-border-radius
 
   &-wrap-name,
   &-wrap-stats
@@ -34,6 +45,41 @@
     font-size: 20px
     label
       font-size: 11px
+
+  &-actions-wrap
+    display: none
+    margin: 4px 0
+    text-align: center
+    border: 1px solid $card-border-color
+    border-radius: $card-border-radius
+
+    &.active
+      display: block
+
+  &-action
+    padding: 2px
+
+    &:hover
+      font-weight: bold
+      cursor: pointer
+
+
+
+  &--select
+    box-shadow: $card-state-shadow $card-select-shadow-color
+
+  &--attack
+    box-shadow: $card-state-shadow $card-attack-shadow-color
+
+  &--block
+    box-shadow: $card-state-shadow $card-block-shadow-color
+
+  &--tap
+    transform: rotateZ(90deg)
+
+  &-opponent
+    .Card-combat-pair
+      order: 2
 
 .Mana
   display: inline-block

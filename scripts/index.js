@@ -3,7 +3,8 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import store from './store'
 import AppRouter from './AppRouter'
-import '../dist/index.css'
+// import '../dist/index.css'
+import '../stylus/index.styl'
 
 render(
   <Provider store={store}>

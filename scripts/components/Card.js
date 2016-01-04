@@ -1,50 +1,89 @@
 import React, { Component, PropTypes, defaultProps } from 'react'
+import cx from 'classname'
+import autobind from 'autobind-decorator'
 import R from 'ramda'
 
+@autobind
 export default class Card extends Component {
-  static defaultProps = {
-    name: 'Nomad Scarab',
-    imgSrc: 'http://placehold.it/150x100',
-    description: {
-      props: [
-        'Deathtouch',
-        'Quickstrike'
-      ],
-      tags: [
+  constructor(props) {
+    super(props)
+    this.state = {
+      displayActions: false
+    }
+  }
+  render() {
+    const { state, props } = this
+    return (
+      <div className={cx('Card', props.className, {
+        'Card-opponent': props.opponent
+      })}
+        onMouseOver={this.handleCardMouseOver}
+        onMouseOut={this.handleCardMouseOut}
+        style={this.handStyles}>
         {
-          condition: { keyword: 'Battlecry' },
-          value: 'Win the game.'
-        },
-        {
-          condition: { colorless: 1, white: 3 },
-          value: 'Opponent loses the game.'
+          props.combatPair
+            ? this.combatPairNode
+            : null
         }
-      ],
-      text: [
-        'This card comes into play phased out then you win after a bit.',
-        'When you die, drink some milk.'
-      ]
-    },
-    attack: 5,
-    health: 3
+        <div className={cx('Card-body', {
+          'Card--select': props.selectState,
+          'Card--attack': props.attackState,
+          'Card--block': props.blockState,
+          'Card--tap': props.tapState
+        })}>
+          <div className='Card-wrap-name'>
+            {props.name}
+          </div>
+          <div className='Card-wrap-tags-overlay' style={{ backgroundImage: `url(${props.imgSrc})` }}>
+            {this.tagOverlayNodes}
+          </div>
+          <div className='Card-wrap-stats'>
+            <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
+            <span className='Card-stat'><label>HP:</label> {props.health}</span>
+          </div>
+        </div>
+        {
+          props.type === 'field'
+            ? this.actions
+            : null
+        }
+      </div>
+    )
   }
 
-  render() {
-    const { props } = this
+  get handStyles() {
+    if (this.props.type === 'hand') {
+      return {
+        marginLeft: this.props.handLength * -9
+      }
+    }
+  }
+
+  handleCardMouseOver(e) {
+    if (this.props.onCardMouseOver) {
+      this.props.onCardMouseOver(e)
+    }
+    this.setState({
+      displayActions: true
+    })
+  }
+
+  handleCardMouseOut(e) {
+    if (this.props.onCardMouseOut) {
+      this.props.onCardMouseOut(e)
+    }
+    this.setState({
+      displayActions: false
+    })
+  }
+
+  get actions() {
     return (
-      <div className='Card'>
-        <div className='Card-wrap-name'>
-          {props.name}
-        </div>
-        <div className='Card-wrap-tags-overlay' style={{ backgroundImage: `url(${props.imgSrc})` }}>
-          {this.tagOverlayNodes}
-        </div>
-        {/*<div className='Card-wrap-description'>
-          {this.description}
-        </div> */}
-        <div className='Card-wrap-stats'>
-          <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
-          <span className='Card-stat'><label>HP:</label> {props.health}</span>
+      <div className={cx('Card-actions-wrap', {
+        active: this.state.displayActions
+      })}>
+        <div className='Card-action'>
+          Use Effect
         </div>
       </div>
     )
@@ -83,6 +122,14 @@ export default class Card extends Component {
             ? <div style={{textAlign: 'center'}}>...</div>
             : null
         }
+      </div>
+    )
+  }
+
+  get combatPairNode() {
+    return (
+      <div className='Card-combat-pair'>
+        {this.props.combatPair}
       </div>
     )
   }

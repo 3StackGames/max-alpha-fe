@@ -3,9 +3,16 @@ import ReactDOM, { render } from 'react-dom'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
 import engine from '../engine'
-import { bindStateDecorator } from '../utils'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as gameStateActs from '../ducks/gameState'
+import { bindStateDecorator as bindState } from '../utils'
 
+@connect(state => ({
+  gameState: state.gameState
+}))
 @autobind
+@bindState(engine)
 export default class MatchMaker extends Component {
   constructor(props) {
     super(props)
@@ -14,11 +21,18 @@ export default class MatchMaker extends Component {
       deckId: 0,
       connected: false
     }
+
+    this.gameStateActs = bindActionCreators(gameStateActs, props.dispatch)
   }
 
   componentWillMount() {
     engine.addOnConnected(this.handleSocketConection)
     engine.addOnGameFound(this.handleGameFound)
+  }
+
+  componentWillUnmount() {
+    engine.removeOnConnected(this.handleSocketConection)
+    engine.removeOnConnected(this.handleGameFound)
   }
 
   render() {
@@ -35,7 +49,12 @@ export default class MatchMaker extends Component {
         <input onChange={this.handlePlayerId} />
         <input onChange={this.handleDeckId} />
         <button onClick={this.handleFindGame}>Find Game</button>
-
+        <button onClick={this.handleReadyGame}>I'm Ready</button>
+        {
+          this.state.playerReadySent
+            ? <span>Waiting for other player to accept...</span>
+            : null
+        }
         <hr/>
 
         <textarea onChange={this.handleJson}></textarea>
@@ -43,6 +62,15 @@ export default class MatchMaker extends Component {
 
       </div>
     )
+  }
+
+  handleReadyGame() {
+    engine.send({
+      eventType: 'Player Ready',
+      gameCode: this.gameCode,
+      playerId: this.state.playerId
+    })
+    // this.props.history.pushState(null, `${this.props.location.pathname}game`)
   }
 
   handleJson(e) {
@@ -62,7 +90,7 @@ export default class MatchMaker extends Component {
   }
 
   handleGameFound(data) {
-    console.log(data)
+    this.gameCode = data.gameCode
   }
 
   handlePlayerId(e) {
@@ -84,5 +112,9 @@ export default class MatchMaker extends Component {
       playerId: this.state.playerId,
       deckId: this.state.deckId
     })
+  }
+
+  bindState() {
+    this.gameStateActs.stateUpdate(engine.getState())
   }
 }

@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux'
+import gameState from './gameState'
 
-const placeholder = (state = {}, action) => state
-const rootReducer = combineReducers({
-  placeholder
+export default combineReducers({
+  gameState
 })
-
-export default rootReducer

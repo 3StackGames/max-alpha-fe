@@ -11,8 +11,8 @@ import {
 const AppRouter = (
   <Router>
     <Route path='/' component={App}>
-      <IndexRoute component={MatchMaker} />
       <Route path='game' component={Game} />
+      <IndexRoute component={MatchMaker} />
     </Route>
     <Route path='/sink' component={Sink} />
   </Router>

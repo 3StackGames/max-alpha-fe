@@ -1,14 +1,20 @@
 import React, { Component } from 'react'
 import {
   Card,
-  Hand
+  Hand,
+  ResourcePool
 } from '../components'
 import R from 'ramda'
 
-const cardModels = [
+let cardModels = [
   {
     name: 'Nomad Scarab',
     imgSrc: 'http://placehold.it/150x100',
+    workingColor: 'blue',
+    cost: {
+      colorless: 1,
+      blue: 2
+    },
     description: {
       props: [
         'Deathtouch',
@@ -35,6 +41,11 @@ const cardModels = [
   {
     name: 'Spider Queen',
     imgSrc: 'http://placehold.it/150x100',
+    workingColor: 'blue',
+    cost: {
+      colorless: 1,
+      blue: 2
+    },
     description: {
       props: [
         'Blocker'
@@ -56,6 +67,11 @@ const cardModels = [
   {
     name: 'Coal Slave',
     imgSrc: 'http://placehold.it/150x100',
+    workingColor: 'colorless',
+    cost: {
+      colorless: 2,
+      blue: 1
+    },
     description: {
       props: [
         'Blocker'
@@ -73,155 +89,21 @@ const cardModels = [
     },
     attack: 2,
     health: 8
-  },
-  {
-    name: 'Spider Queen',
-    imgSrc: 'http://placehold.it/150x100',
-    description: {
-      props: [
-        'Blocker'
-      ],
-      tags: [
-        {
-          condition: { colorless: 2, yellow: 3 },
-          value: 'Opponent loses the game.'
-        }
-      ],
-      text: [
-        'This card comes into play phased out then you win after a bit.',
-        'When you die, drink some milk.'
-      ]
-    },
-    attack: 2,
-    health: 8
-  },
-  // {
-  //   name: 'Spider Queen',
-  //   imgSrc: 'http://placehold.it/150x100',
-  //   description: {
-  //     props: [
-  //       'Blocker'
-  //     ],
-  //     tags: [
-  //       {
-  //         condition: { colorless: 2, yellow: 3 },
-  //         value: 'Opponent loses the game.'
-  //       }
-  //     ],
-  //     text: [
-  //       'This card comes into play phased out then you win after a bit.',
-  //       'When you die, drink some milk.'
-  //     ]
-  //   },
-  //   attack: 2,
-  //   health: 8
-  // },
-  // {
-  //   name: 'Spider Queen',
-  //   imgSrc: 'http://placehold.it/150x100',
-  //   description: {
-  //     props: [
-  //       'Blocker'
-  //     ],
-  //     tags: [
-  //       {
-  //         condition: { colorless: 2, yellow: 3 },
-  //         value: 'Opponent loses the game.'
-  //       }
-  //     ],
-  //     text: [
-  //       'This card comes into play phased out then you win after a bit.',
-  //       'When you die, drink some milk.'
-  //     ]
-  //   },
-  //   attack: 2,
-  //   health: 8
-  // },
-  // {
-  //   name: 'Spider Queen',
-  //   imgSrc: 'http://placehold.it/150x100',
-  //   description: {
-  //     props: [
-  //       'Blocker'
-  //     ],
-  //     tags: [
-  //       {
-  //         condition: { colorless: 2, yellow: 3 },
-  //         value: 'Opponent loses the game.'
-  //       }
-  //     ],
-  //     text: [
-  //       'This card comes into play phased out then you win after a bit.',
-  //       'When you die, drink some milk.'
-  //     ]
-  //   },
-  //   attack: 2,
-  //   health: 8
-  // },
-  // {
-  //   name: 'Spider Queen',
-  //   imgSrc: 'http://placehold.it/150x100',
-  //   description: {
-  //     props: [
-  //       'Blocker'
-  //     ],
-  //     tags: [
-  //       {
-  //         condition: { colorless: 2, yellow: 3 },
-  //         value: 'Opponent loses the game.'
-  //       }
-  //     ],
-  //     text: [
-  //       'This card comes into play phased out then you win after a bit.',
-  //       'When you die, drink some milk.'
-  //     ]
-  //   },
-  //   attack: 2,
-  //   health: 8
-  // },
-  // {
-  //   name: 'Spider Queen',
-  //   imgSrc: 'http://placehold.it/150x100',
-  //   description: {
-  //     props: [
-  //       'Blocker'
-  //     ],
-  //     tags: [
-  //       {
-  //         condition: { colorless: 2, yellow: 3 },
-  //         value: 'Opponent loses the game.'
-  //       }
-  //     ],
-  //     text: [
-  //       'This card comes into play phased out then you win after a bit.',
-  //       'When you die, drink some milk.'
-  //     ]
-  //   },
-  //   attack: 2,
-  //   health: 8
-  // },
-  // {
-  //   name: 'Spider Queen',
-  //   imgSrc: 'http://placehold.it/150x100',
-  //   description: {
-  //     props: [
-  //       'Blocker'
-  //     ],
-  //     tags: [
-  //       {
-  //         condition: { colorless: 2, yellow: 3 },
-  //         value: 'Opponent loses the game.'
-  //       }
-  //     ],
-  //     text: [
-  //       'This card comes into play phased out then you win after a bit.',
-  //       'When you die, drink some milk.'
-  //     ]
-  //   },
-  //   attack: 2,
-  //   health: 8
-  // }
+  }
 ]
+
+const resourceData = {
+  resources: {
+    colorless: 1,
+    white: 2,
+    blue: 4
+  },
+  workers: [
+    cardModels[0],
+    cardModels[1],
+    cardModels[2]
+  ]
+}
 
 export default class App extends Component {
   render() {
@@ -251,6 +133,10 @@ export default class App extends Component {
 
     const handWrapperStyles = {
       margin: 15,
+    }
+
+    const resourcePoolWrapperStyles = {
+      margin: 15
     }
 
     return (
@@ -305,6 +191,10 @@ export default class App extends Component {
         <div style={{...handWrapperStyles}}>
           <p>Hand</p>
           <Hand cards={cardModels}/>
+        </div>
+        <div style={{...resourcePoolWrapperStyles}}>
+          <p>Resource Pool</p>
+          <ResourcePool {...resourceData}/>
         </div>
       </div>
     )

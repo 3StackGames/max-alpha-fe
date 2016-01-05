@@ -58,7 +58,7 @@
 .Card-stat label {
   font-size: 11px;
 }
-.Mana {
+.Resource {
   display: inline-block;
   width: 14px;
   height: 14px;
@@ -70,15 +70,15 @@
   vertical-align: middle;
   color: #000;
 }
-.Mana-colorless {
+.Resource-colorless {
   background-color: #dedede;
   border-color: #9b9b9b;
 }
-.Mana-white {
+.Resource-white {
   background-color: #fff;
   border-color: #b3b3b3;
 }
-.Mana-blue {
+.Resource-blue {
   background-color: #2051e4;
   border-color: #1437a2;
 }

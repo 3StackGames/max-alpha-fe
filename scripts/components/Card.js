@@ -2,6 +2,7 @@ import React, { Component, PropTypes, defaultProps } from 'react'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
 import R from 'ramda'
+import ResourceOrb from './ResourceOrb'
 
 @autobind
 export default class Card extends Component {
@@ -152,32 +153,12 @@ const TagKey = ({ condition }) => {
 
   const manaNodes = Object.keys(condition).map(color => {
     return (
-      <Mana key={color} color={color} cost={condition[color]} />
+      <ResourceOrb key={color} color={color} cost={condition[color]} />
     )
   })
   return (
     <span>
       {manaNodes}
-    </span>
-  )
-}
-
-const Mana = ({ color, cost }) => {
-
-  if (color === 'colorless') {
-    return (
-      <span className={`Mana Mana-${color}`}>{cost}</span>
-    )
-  }
-
-  const nodes = R.range(0, cost).map(i => {
-    return (
-      <span key={i} className={`Mana Mana-${'blue'}`}></span>
-    )
-  })
-  return (
-    <span>
-      {nodes}
     </span>
   )
 }

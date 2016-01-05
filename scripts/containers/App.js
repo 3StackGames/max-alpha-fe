@@ -3,8 +3,9 @@ import React, { Component } from 'react'
 export default class App extends Component {
   render() {
     return (
-      // Add your component markup and other subcomponent references here.
-      <h1>Hello, Jason</h1>
+      <div>
+        {this.props.children}
+      </div>
     )
   }
 }

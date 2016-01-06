@@ -1,0 +1,65 @@
+.ResourceOrb
+  display: inline-block
+  width: 25px
+  height: 25px
+  margin-right: 3px
+  border: 1px solid
+  border-radius: 100px
+  font-size: 20px
+  line-height: 25px
+  text-align: center
+  vertical-align: middle
+  color: black
+
+  &-colorless
+    background-color: $mana-colorless
+    border-color: darken(@background-color, 30%)
+    transition: transform 250ms ease
+
+    // &.WorkerOrb
+    //   &--zoom
+    //     box-shadow: $worker-state-shadow $worker-colorless-zoom-shadow-color
+    //   &--select
+    //     box-shadow: $worker-state-shadow $worker-colorless-select-shadow-color
+
+  &-white
+    background-color: $mana-white
+    border-color: darken(@background-color, 30%)
+    
+    // &.WorkerOrb
+    //   &--zoom
+    //     box-shadow: $worker-state-shadow $worker-white-zoom-shadow-color
+    //   &--select
+    //     box-shadow: $worker-state-shadow $worker-white-select-shadow-color
+
+  &-blue
+    background-color: $mana-blue
+    border-color: darken(@background-color, 30%)
+    
+    // &.WorkerOrb
+    //   &--zoom
+    //     box-shadow: $worker-state-shadow $worker-blue-zoom-shadow-color
+    //   &--select
+    //     box-shadow: $worker-state-shadow $worker-blue-select-shadow-color
+  
+  &-yellow
+    background-color: $mana-yellow
+    border-color: darken(@background-color, 30%)
+  
+  &-green
+    background-color: $mana-green
+    border-color: darken(@background-color, 30%)
+  
+  &-red
+    background-color: $mana-red
+    border-color: darken(@background-color, 30%)
+  
+  &-black
+    background-color: $mana-black
+    border-color: darken(@background-color, 30%)
+
+.WorkerOrb
+  &--zoom
+    transform: scale(1.2)
+  &--select
+    transform: scale(1.5)

@@ -29,7 +29,8 @@ export default class App extends Component {
           type='hand'
           opponent={this.props.opponent}
           handLength={this.props.cards.length}
-          selectState={this.state.selecting[card.id]}
+          zoomState={this.props.ui.zoomedCard === card.id}
+          selectState={this.props.ui.selectedCard === card.id}
           onCardMouseOver={this.handleCardMouseOver}
           onCardMouseOut={this.handleCardMouseOut}
           onCardClick={this.handleCardClick}
@@ -44,17 +45,9 @@ export default class App extends Component {
 
   handleCardMouseOver(e, id) {
     this.props.uiActs.zoomCard(id)
-    this.state.selecting[id] = true
-    this.setState({
-      selecting: this.state.selecting
-    })
   }
 
   handleCardMouseOut(e, id) {
     this.props.uiActs.zoomCard(null)
-    this.state.selecting[id] = false
-    this.setState({
-      selecting: this.state.selecting
-    })
   }
 }

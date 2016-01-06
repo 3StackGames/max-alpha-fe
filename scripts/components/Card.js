@@ -28,6 +28,7 @@ export default class Card extends Component {
             : null
         }
         <div className={cx('Card-body', {
+          'Card--zoom': props.zoomState,
           'Card--select': props.selectState,
           'Card--attack': props.attackState,
           'Card--block': props.blockState,

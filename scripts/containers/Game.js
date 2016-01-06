@@ -11,7 +11,8 @@ import { bindStateDecorator } from '../utils'
 import {
   Hand,
   Card,
-  ResourceOrb
+  ResourceOrb,
+  WorkerOrb
 } from '../components'
 
 @connect(state => ({
@@ -79,12 +80,12 @@ export default class Game extends Component {
             </div>
           </div>
           <div className='CenterField'>
-            <Hand uiActs={this.uiActs} cards={this.opponentHandCards} opponent={true} />
+            <Hand ui={this.props.ui} uiActs={this.uiActs} cards={this.opponentHandCards} opponent={true} />
             <div className='ActionBar'>
               <button onClick={this.assignAction}>Assign</button>
               <button onClick={this.playAction}>Play</button>
             </div>
-            <Hand uiActs={this.uiActs} cards={this.playerHandCards} />
+            <Hand ui={this.props.ui} uiActs={this.uiActs} cards={this.playerHandCards} />
           </div>
           <div className='RightField'>
             <div className='RightField-section RightField-opponent'>
@@ -200,10 +201,6 @@ export default class Game extends Component {
       ))
   }
 
-  get playerWorkerNodes() {
-    return 'none'
-  }
-
   get opponentPoolNodes() {
     const colorResources = this.opponent.resources.colors
     const nonemptyColorResources = Object.keys(colorResources)
@@ -214,6 +211,39 @@ export default class Game extends Component {
       : nonemptyColorResources.map((color, i) => (
         <ResourceOrb key={i} color={color} value={colorResources[color]} />
       ))
+  }
+
+  get playerWorkerNodes() {
+    return this.player.workers.length === 0
+      ? 'none'
+      : this.player.workers
+      .map(worker => worker.id)
+      .map((id, i) => {
+        const color = this.props.game.state.cardList[id].dominantColor.toUpperCase()
+        return (
+          <WorkerOrb
+            key={i}
+            id={id}
+            color={color}
+            zoomState={this.props.ui.zoomedCard === id}
+            selectState={this.props.ui.selectedCard === id}
+            onOrbClick={this.handleOrbClick}
+            onOrbOver={this.handleOrbMouseOver}
+            onOrbOut={this.handleOrbMouseOut} />
+        )
+      })
+  }
+
+  handleOrbClick(e, id) {
+    this.uiActs.selectCard(id)
+  }
+
+  handleOrbMouseOver(e, id) {
+    this.uiActs.zoomCard(id)
+  }
+
+  handleOrbMouseOut(e, id) {
+    this.uiActs.zoomCard(null)
   }
 
   get opponentWorkerNodes() {

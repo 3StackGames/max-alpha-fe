@@ -11,7 +11,7 @@ const reducer = (state = initialState, action) => {
     case SELECT_CARD:
       return {
         ...state,
-        selectedCard: payload
+        selectedCard: state.selectedCard === payload ? null : payload
       }
     case ZOOM_CARD:
       return {

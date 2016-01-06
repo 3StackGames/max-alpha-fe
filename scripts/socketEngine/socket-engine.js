@@ -18,15 +18,9 @@ const SocketEngine = ({ host, port }) => {
   }
 
   const mapMessageToEvent = event => {
-    try {
-      const data = JSON.parse(event.data)
-      const emitted = wsEmitter.emit(data.eventType, data)
-      emitToMiddleware(data)
-    }
-    catch (err) {
-      console.error(err)
-      console.error(event)
-    }
+    const data = JSON.parse(event.data)
+    const emitted = wsEmitter.emit(data.eventType, data)
+    emitToMiddleware(data)
   }
 
   // Default state update handler to enable state engine to emit a change event

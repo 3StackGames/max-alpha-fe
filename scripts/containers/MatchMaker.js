@@ -5,14 +5,14 @@ import autobind from 'autobind-decorator'
 import engine from '../engine'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as gameStateActs from '../ducks/gameState'
-import { bindStateDecorator as bindState } from '../utils'
+import * as gameActs from '../ducks/game'
+import { bindStateDecorator } from '../utils'
 
 @connect(state => ({
-  gameState: state.gameState
+  game: state.game
 }))
 @autobind
-@bindState(engine)
+@bindStateDecorator(engine)
 export default class MatchMaker extends Component {
   constructor(props) {
     super(props)
@@ -22,12 +22,18 @@ export default class MatchMaker extends Component {
       connected: false
     }
 
-    this.gameStateActs = bindActionCreators(gameStateActs, props.dispatch)
+    this.gameActs = bindActionCreators(gameActs, props.dispatch)
   }
 
   componentWillMount() {
     engine.addOnConnected(this.handleSocketConection)
     engine.addOnGameFound(this.handleGameFound)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.game.state && nextProps.game.state.players) {
+      nextProps.history.pushState(null, `${nextProps.location.pathname}game`)
+    }
   }
 
   componentWillUnmount() {
@@ -70,7 +76,6 @@ export default class MatchMaker extends Component {
       gameCode: this.gameCode,
       playerId: this.state.playerId
     })
-    // this.props.history.pushState(null, `${this.props.location.pathname}game`)
   }
 
   handleJson(e) {
@@ -91,6 +96,8 @@ export default class MatchMaker extends Component {
 
   handleGameFound(data) {
     this.gameCode = data.gameCode
+    this.gameActs.setGameCode(data.gameCode)
+    this.gameActs.setPlayer(data.playerId)
   }
 
   handlePlayerId(e) {
@@ -115,6 +122,6 @@ export default class MatchMaker extends Component {
   }
 
   bindState() {
-    this.gameStateActs.stateUpdate(engine.getState())
+    this.gameActs.stateUpdate(engine.getState())
   }
 }

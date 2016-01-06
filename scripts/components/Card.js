@@ -18,6 +18,7 @@ export default class Card extends Component {
       <div className={cx('Card', props.className, {
         'Card-opponent': props.opponent
       })}
+        onClick={this.handleClick}
         onMouseOver={this.handleCardMouseOver}
         onMouseOut={this.handleCardMouseOut}
         style={this.handStyles}>
@@ -32,16 +33,11 @@ export default class Card extends Component {
           'Card--block': props.blockState,
           'Card--tap': props.tapState
         })}>
-          <div className='Card-wrap-name'>
-            {props.name}
-          </div>
-          <div className='Card-wrap-tags-overlay' style={{ backgroundImage: `url(${props.imgSrc})` }}>
-            {this.tagOverlayNodes}
-          </div>
-          <div className='Card-wrap-stats'>
-            <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
-            <span className='Card-stat'><label>HP:</label> {props.health}</span>
-          </div>
+          {
+            props.opponent
+              ? this.backFaceBody
+              : this.frontFaceBody
+          }
         </div>
         {
           props.type === 'field'
@@ -52,18 +48,50 @@ export default class Card extends Component {
     )
   }
 
+  get backFaceBody() {
+    return (
+      <div className='Card-back'>
+      </div>
+    )
+  }
+
+  get frontFaceBody() {
+    const { props } = this
+    return (
+      <div>
+        <div className='Card-wrap-name'>
+          {props.name}
+        </div>
+        <div className='Card-wrap-tags-overlay'>
+          {/*{this.tagOverlayNodes}*/}
+        </div>
+        <div className='Card-wrap-stats'>
+          <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
+          <span className='Card-stat'><label>HP:</label> {props.health}</span>
+        </div>
+      </div>
+    )
+  }
+
   get handStyles() {
     if (this.props.type === 'hand') {
       return {
-        marginLeft: this.props.handLength * -9
+        marginLeft: this.props.handLength * -6
       }
+    }
+  }
+
+  handleClick(e) {
+    if (this.props.onCardClick) {
+      this.props.onCardClick(e, this.props.id)
     }
   }
 
   handleCardMouseOver(e) {
     if (this.props.onCardMouseOver) {
-      this.props.onCardMouseOver(e)
+      this.props.onCardMouseOver(e, this.props.id)
     }
+
     this.setState({
       displayActions: true
     })
@@ -71,7 +99,7 @@ export default class Card extends Component {
 
   handleCardMouseOut(e) {
     if (this.props.onCardMouseOut) {
-      this.props.onCardMouseOut(e)
+      this.props.onCardMouseOut(e, this.props.id)
     }
     this.setState({
       displayActions: false
@@ -104,6 +132,7 @@ export default class Card extends Component {
     )
   }
 
+  // Need to remake with the game state
   get tagOverlayNodes() {
     const { tags } = this.props.description
     // get only the first two tags

@@ -9,7 +9,7 @@ export default class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selecting: Array(this.props.cards.length).fill(false)
+      selecting: {}
     }
   }
 
@@ -25,27 +25,34 @@ export default class App extends Component {
     return this.props.cards.map((card, i) => {
       return (
         <Card
-          ref={`card-${i}`}
           key={i}
           type='hand'
+          opponent={this.props.opponent}
           handLength={this.props.cards.length}
-          selectState={this.state.selecting[i]}
-          onCardMouseOver={this.cardMouseOver.bind(this, i)}
-          onCardMouseOut={this.cardMouseOut.bind(this, i)}
+          selectState={this.state.selecting[card.id]}
+          onCardMouseOver={this.handleCardMouseOver}
+          onCardMouseOut={this.handleCardMouseOut}
+          onCardClick={this.handleCardClick}
           {...card} />
       )
     })
   }
 
-  cardMouseOver(i, e) {
-    this.state.selecting[i] = true
+  handleCardClick(e, id) {
+    this.props.uiActs.selectCard(id)
+  }
+
+  handleCardMouseOver(e, id) {
+    this.props.uiActs.zoomCard(id)
+    this.state.selecting[id] = true
     this.setState({
       selecting: this.state.selecting
     })
   }
 
-  cardMouseOut(i, e) {
-    this.state.selecting[i] = false
+  handleCardMouseOut(e, id) {
+    this.props.uiActs.zoomCard(null)
+    this.state.selecting[id] = false
     this.setState({
       selecting: this.state.selecting
     })

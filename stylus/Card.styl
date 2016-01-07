@@ -2,12 +2,12 @@
   display: flex
   flex-direction: column
   background: #fff
+
   &-body
     width: 80px
     border: 1px solid $card-border-color
     border-radius: $card-border-radius
     overflow-y: hidden
-
     display: inline-flex
     flex-direction: column
 
@@ -73,7 +73,9 @@
     &:hover
       font-weight: bold
       cursor: pointer
-
+  
+  &-shrink
+    width: 60px
 
   &--zoom
     box-shadow: $card-state-shadow $card-zoom-shadow-color

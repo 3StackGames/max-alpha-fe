@@ -14,7 +14,6 @@
   &-colorless
     background-color: $mana-colorless
     border-color: darken(@background-color, 30%)
-    transition: transform 250ms ease
 
     // &.WorkerOrb
     //   &--zoom
@@ -59,6 +58,8 @@
     border-color: darken(@background-color, 30%)
 
 .WorkerOrb
+  transition: transform 250ms ease
+   
   &--zoom
     transform: scale(1.2)
   &--select

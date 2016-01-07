@@ -25,7 +25,8 @@ const SocketEngine = ({ host, port }) => {
 
   // Default state update handler to enable state engine to emit a change event
   const handleStateUpdate = data => {
-    stateEngine.setState(data.state)
+    const { state, cardList } = data
+    stateEngine.setState({ state, cardList })
   }
 
   const addOnAllMessages = fn => {

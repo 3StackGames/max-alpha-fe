@@ -15,9 +15,10 @@ export default class Card extends Component {
   render() {
     const { state, props } = this
     return (
-      <div className={cx('Card', props.className, {
-        'Card-opponent': props.opponent
-      })}
+      <div
+        className={cx('Card', props.className, {
+          'Card-opponent': props.opponent
+        })}
         onClick={this.handleClick}
         onMouseOver={this.handleCardMouseOver}
         onMouseOut={this.handleCardMouseOut}
@@ -27,24 +28,21 @@ export default class Card extends Component {
             ? this.combatPairNode
             : null
         }
-        <div className={cx('Card-body', {
-          'Card--zoom': props.zoomState,
-          'Card--select': props.selectState,
-          'Card--attack': props.attackState,
-          'Card--block': props.blockState,
-          'Card--tap': props.tapState
-        })}>
+        <div
+          className={cx('Card-body', {
+            'Card-shrink': props.shrink,
+            'Card--zoom': props.zoomState,
+            'Card--select': props.selectState,
+            'Card--attack': props.attackState,
+            'Card--block': props.blockState,
+            'Card--tap': props.tapState
+          })}>
           {
             props.opponent
               ? this.backFaceBody
               : this.frontFaceBody
           }
         </div>
-        {
-          props.type === 'field'
-            ? this.actions
-            : null
-        }
       </div>
     )
   }

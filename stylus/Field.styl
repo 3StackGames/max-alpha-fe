@@ -11,13 +11,13 @@
   display: flex
   flex-direction: column
   justify-content: space-between
-  
+
   .FieldGroup
     height: 100px
     display: flex
     justify-content: center
     align-items: center
-    
+
     &-label
       color: #a0a0a0
       display: inline-block
@@ -29,6 +29,35 @@
   display: flex
   flex-direction: column
   justify-content: space-between
+
+  &-Player
+    display: flex
+    flex-grow: 1
+    align-items: stretch
+
+  .LeftGroup
+    width: 200px
+    display: flex
+
+    .StructGroup-wrap
+      display: flex
+      flex-grow: 1
+
+  .RightGroup
+    flex-grow: 1
+    display: flex
+    flex-direction: column
+
+    .CreatureGroup-wrap
+      display: flex
+      justify-content: center
+      align-items: center
+      
+      .Card
+        margin: 0 4px
+
+    > div
+      flex: 1
 
 .RightField
   width: 250px
@@ -64,10 +93,27 @@
   display: flex
   justify-content: center
   align-items: center
+  
+  &:hover
+    cursor: pointer
 
 .ResourcePane
   &-wrap
     background: #d3f0f0
-  
+
   &-pool
     margin-bottom: 15px
+
+
+.UIBar
+  display: flex
+  justify-content: space-between
+  align-items: center
+  position: relative
+  height: 80px
+
+.ZoomView-wrap
+  height: 100%
+  display: flex
+  justify-content: center
+  align-items: center

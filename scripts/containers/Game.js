@@ -14,6 +14,7 @@ import {
   ResourceOrb,
   WorkerOrb
 } from '../components'
+import titleCase from 'title-case'
 
 @connect(state => ({
   game: state.game,
@@ -30,6 +31,12 @@ export default class Game extends Component {
 
     this.gameActs = bindActionCreators(gameActs, props.dispatch)
     this.uiActs = bindActionCreators(uiActs, props.dispatch)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.ui.attackingCard && prevProps.ui.attackingCard !== this.props.ui.attackingCard) {
+      this.declareAttackAction()
+    }
   }
 
   render() {
@@ -80,12 +87,60 @@ export default class Game extends Component {
             </div>
           </div>
           <div className='CenterField'>
-            <Hand ui={this.props.ui} uiActs={this.uiActs} cards={this.opponentHandCards} opponent={true} />
-            <div className='ActionBar'>
-              <button onClick={this.assignAction}>Assign</button>
-              <button onClick={this.playAction}>Play</button>
+            <div className='FieldGroup CenterField-Player'>
+              <div className='LeftGroup'>
+                <div className='StructGroup-wrap'>
+                  Structures
+                </div>
+              </div>
+              <div className='RightGroup'>
+                <div className='HandGroup-wrap'>
+                  <Hand
+                    ui={this.props.ui}
+                    uiActs={this.uiActs}
+                    cards={this.opponentHandCards}
+                    opponent={true} />
+                </div>
+                <div className='CreatureGroup-wrap'>
+                  {this.opponentCreatureNodes}
+                </div>
+              </div>
             </div>
-            <Hand ui={this.props.ui} uiActs={this.uiActs} cards={this.playerHandCards} />
+            <div className='FieldGroup UIBar'>
+              <div className='ActionView-wrap'>
+                <div className='ActionView'>
+                  {this.actionViewNode}
+                </div>
+              </div>
+              <div className='ActionUIView-wrap'>
+                <div className='ActionUIView'>
+                  {this.actionUIViewNode}
+                </div>
+              </div>
+              <div className='ZoomView-wrap'>
+                <div className='ZoomView'>
+                  {this.zoomViewNode}
+                </div>
+              </div>
+            </div>
+            <div className='FieldGroup CenterField-Player'>
+              <div className='LeftGroup'>
+                <div className='StructGroup-wrap'>
+                  Structures
+                </div>
+              </div>
+              <div className='RightGroup'>
+                <div className='CreatureGroup-wrap'>
+                  {this.playerCreatureNodes}
+                </div>
+                <div className='HandGroup-wrap'>
+                  <Hand
+                    ui={this.props.ui}
+                    uiActs={this.uiActs}
+                    cards={this.playerHandCards} />
+                </div>
+              </div>
+            </div>
           </div>
           <div className='RightField'>
             <div className='RightField-section RightField-opponent'>
@@ -101,15 +156,18 @@ export default class Game extends Component {
               </div>
               <div className='NexusPane-wrap FieldGroup'>
                 <div className='Nexus'>
-                  {this.playerNexusNode}
+                  {this.opponentNexusNode}
                 </div>
+              </div>
+            </div>
+            <div className='RightField-section'>
+              <div className='PhaseAction-wrap'>
+                {this.phaseActionNode}
               </div>
             </div>
             <div className='RightField-section RightField-player'>
               <div className='NexusPane-wrap FieldGroup'>
-                <div className='Nexus'>
-                  {this.playerNexusNode}
-                </div>
+                {this.playerNexusNode}
               </div>
               <div className='ResourcePane-wrap FieldGroup'>
                 <div className='ResourcePane-pool'>
@@ -139,51 +197,51 @@ export default class Game extends Component {
 
   get playerHandCards() {
     const { props } = this
-    return this.player.hand.map(card => props.game.state.cardList[card.id])
+    return this.player.hand.cardIds.map(id => props.game.cardList[id].value)
   }
 
   get opponentHandCards() {
     const { props } = this
-    return this.opponent.hand.map(card => props.game.state.cardList[card.id])
+    return this.opponent.hand.cardIds.map(id => ({ id }))
   }
 
   get playerDeckNodes() {
-    return this.player.deck.cards.map((card, i) => (
+    return this.player.deck.cardIds.map((card, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get opponentDeckNodes() {
-    return this.opponent.deck.cards.map((card, i) => (
+    return this.opponent.deck.cardIds.map((card, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get playerStructureDeckNodes() {
-    return this.player.structures.map((card, i) => (
+    return this.player.deck.buildables.cardIds.map((card, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get opponentStructureDeckNodes() {
-    return this.opponent.structures.map((card, i) => (
+    return this.opponent.deck.buildables.cardIds.map((card, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get playerGraveNodes() {
-    return this.player.grave.map((card, i) => (
+    return this.player.grave.cardIds.map((card, i) => (
       <div key={i} className='Grave-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get opponentGraveNodes() {
-    return this.opponent.grave.map((card, i) => (
+    return this.opponent.grave.cardIds.map((card, i) => (
       <div key={i} className='Grave-card Grave-card-opponent' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
@@ -214,12 +272,11 @@ export default class Game extends Component {
   }
 
   get playerWorkerNodes() {
-    return this.player.workers.length === 0
+    return this.player.town.cardIds.length === 0
       ? 'none'
-      : this.player.workers
-      .map(worker => worker.id)
+      : this.player.town.cardIds
       .map((id, i) => {
-        const color = this.props.game.state.cardList[id].dominantColor.toUpperCase()
+        const color = this.props.game.cardList[id].value.dominantColor.toUpperCase()
         return (
           <WorkerOrb
             key={i}
@@ -250,26 +307,81 @@ export default class Game extends Component {
     return 'none'
   }
 
+  get playerCreatureNodes() {
+    return this._createNodes(this.player)
+  }
+
+  get opponentCreatureNodes() {
+    return this.opponent.field.cardIds
+      .map(id => this.props.game.cardList[id].value)
+      .map((card, i) => {
+        return (
+          <Card
+            key={i}
+            shrink={this.opponent.field.cardIds.length > 6}
+            type='field'
+            id={card.id}
+            zoomState={this.props.ui.zoomedCard === card.id}
+            selectState={this.props.ui.selectedCard === card.id}
+            onCardMouseOver={(e, id) => this.uiActs.zoomCard(id)}
+            onCardMouseOut={(e, id) => this.uiActs.zoomCard(null)}
+            onCardClick={(e, id) => this.uiActs.selectCard(id)}
+            {...card} />
+        )
+      })
+  }
+
+  _createNodes(target) {
+    return target.field.cardIds
+      .map(id => this.props.game.cardList[id].value)
+      .map((card, i) => {
+        return (
+          <Card
+            key={i}
+            shrink={target.field.cardIds.length > 6}
+            type='field'
+            id={card.id}
+            zoomState={this.props.ui.zoomedCard === card.id}
+            selectState={this.props.ui.selectedCard === card.id}
+            onCardMouseOver={(e, id) => this.uiActs.zoomCard(id)}
+            onCardMouseOut={(e, id) => this.uiActs.zoomCard(null)}
+            onCardClick={(e, id) => this.uiActs.selectCard(id)}
+            {...card} />
+        )
+      })
+  }
+
   get playerNexusNode() {
     return (
-      <div>
-        {this.player.base.health}
+      <div
+        className='Nexus'
+        onClick={() => this.uiActs.selectCard(this.player.castle.id)}>
+        {this.player.castle.health}
       </div>
     )
   }
 
   get opponentNexusNode() {
     return (
-      <div>
-        {this.opponent.base.health}
+      <div
+        className='Nexus'
+        onClick={() => this.uiActs.selectCard(this.opponent.castle.id)}>
+        {this.opponent.castle.health}
       </div>
     )
   }
 
-  selectCard(cardId) {
-    this.setState({
-      selectedCard: cardId
-    })
+  UIPlayAction() {
+    this.uiActs.declarePlayCard(this.props.ui.selectedCard)
+  }
+
+  UIAssignCostAction(color, value) {
+    this.uiActs.assignCost(color, value)
+  }
+
+  UIAttackAction() {
+    this.uiActs.declareAttackCard(this.props.ui.selectedCard)
+    this.uiActs.selectCard(null)
   }
 
   assignAction() {
@@ -285,7 +397,208 @@ export default class Game extends Component {
   }
 
   playAction() {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Play Card',
+        playerId: this.props.game.currentPlayer,
+        cardId: this.props.ui.selectedCard,
+        cost: this.props.ui.cost
+      }
+    })
+  }
 
+  pullAction() {
+
+  }
+
+  declareAttackAction() {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Declare Attacker',
+        playerId: this.props.game.currentPlayer,
+        cardId: this.props.ui.attackingCard
+      }
+    })
+  }
+
+  singleTargetPromptAction() {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Single Target Prompt',
+        playerId: this.props.game.currentPlayer,
+        cardId: this.props.ui.selectedCard
+      }
+    })
+  }
+
+  finishPhaseAction() {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Finish Phase',
+        playerId: this.props.game.currentPlayer
+      }
+    })
+  }
+
+  get actionViewNode() {
+    const cardId = this.props.ui.selectedCard
+    if (!cardId) {
+      return
+    } 
+    
+    if (this.inLocation('player', 'field', cardId)) {
+      return [
+        <button onClick={this.UIAttackAction}>Attack</button>
+      ]
+    }
+
+    if (this.inLocation('player', 'hand', cardId)) {
+      return [
+        <button onClick={this.UIPlayAction}>Play</button>,
+        <button onClick={this.assignAction}>Assign</button>
+      ]
+    }
+
+    if (this.inLocation('player', 'town', cardId)) {
+      return [
+        <button onClick={this.pullAction}>Pull</button>
+      ]
+    }
+  }
+
+  inLocation(target, location, findId) {
+    return this[target][location].cardIds.find(id => id === findId)
+  }
+
+  get actionUIViewNode() {
+    if (this.props.ui.playingCard) {
+      return this.playingActionUIViewNode
+    }
+
+    if (this.props.game.state.promptQueue.length > 0) {
+      return this.promptUINode
+    }
+  }
+
+  get playingActionUIViewNode() {
+    const cardId = this.props.ui.playingCard
+    const playerResources = this.player.resources.colors
+    const costButtonNodes = Object.keys(playerResources)
+      .filter(color => playerResources[color] > 0)
+      .map(color => {
+        const colorValue = this.props.ui.cost.colors[titleCase(color)] || 0
+        return (
+          <div key={color}>
+            <button
+              onClick={() => this.uiActs.assignCost(color, colorValue + 1)}>
+              {color}: {colorValue}
+            </button>
+          </div>
+        )
+      })
+
+    const card = this.props.game.cardList[cardId].value
+    const cardCost = card.currentCost.colors
+    const costNodes = Object.keys(cardCost)
+      .filter(color => cardCost[color] > 0)
+      .map(color => (
+        <span key={color}>{color}: {cardCost[color]} </span>
+      ))
+    const playCard = () => {
+      this.playAction()
+      this.uiActs.declarePlayCard(null)
+      this.uiActs.selectCard(null)
+    }
+
+    return (
+      <div>
+        <div>{costNodes}</div>
+        {costButtonNodes}
+        <button onClick={() => this.uiActs.declarePlayCard(null)}>Cancel</button>
+        <button onClick={() => playCard()}>PLAY</button>
+      </div>
+    )
+  }
+
+  get attackingActionUIViewNode() {
+    const { selectedCard } = this.props.ui
+    if (selectedCard) {
+      return (
+        <div>
+          <p>Targetting: {this.props.game.cardList[selectedCard].value.name}</p>
+          <button onClick={this.declareAttackAction}>Attack</button>
+        </div>
+      )
+    }
+    return (
+      <div>
+        <p>Choose a target</p>
+      </div>
+    )
+  }
+
+  get promptUINode() {
+    const { selectedCard } = this.props.ui
+    if (selectedCard) {
+      return (
+        <div>
+          <p>Targetting: {this.props.game.cardList[selectedCard].value.name}</p>
+          <button onClick={this.singleTargetPromptAction}>Attack</button>
+        </div>
+      )
+    }
+    return (
+      <div>
+        <p>Choose a target</p>
+      </div>
+    )
+  }
+
+  get zoomViewNode() {
+    if (!this.props.ui.zoomedCard) {
+      return
+    }
+
+    return (
+      <pre>{JSON.stringify(this.props.game.cardList[this.props.ui.zoomedCard], null, 2)}</pre>
+    )
+  }
+
+  get phaseActionNode() {
+    let buttonText = ''
+    const phaseName = this.props.game.state.currentPhase.name
+    switch (phaseName) {
+      case 'Main Phase':
+        buttonText = this.props.game.state.combatEnded
+          ? 'END TURN'
+          : 'DECLARE ATTACKERS'
+        break
+      case 'Attack Phase':
+        buttonText = 'PREPARE BLOCKERS'
+        break
+      case 'Block Phase':
+        buttonText = 'TO MAIN PHASE'
+        break
+      default:
+        buttonText = phaseName
+    }
+
+    return (
+      <div>
+        <p>{phaseName}</p>
+        <button
+          className='PhaseAction'
+          onClick={this.finishPhaseAction}>{buttonText}</button>
+      </div>
+    )
   }
 
   bindState() {

@@ -5,7 +5,8 @@ const SET_GAME_CODE = 'max-alpha/game/SET_GAME_CODE'
 const initialState = {
   currentPlayer: null,
   gameCode: null,
-  state: null
+  state: {},
+  cardList: []
 }
 const reducer = (state = initialState, action) => {
   const { type, payload } = action
@@ -13,7 +14,8 @@ const reducer = (state = initialState, action) => {
     case STATE_UPDATE:
       return {
         ...state,
-        state: payload
+        state: payload.state,
+        cardList: payload.cardList
       }
     case SET_PLAYER:
       return {

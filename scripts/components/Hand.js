@@ -13,6 +13,13 @@ export default class App extends Component {
     }
   }
 
+  static PropTypes = {
+    ui: PropTypes.object.isRequired,
+    onCardClick: PropTypes.func.isRequired,
+    onCardMouseOver: PropTypes.func.isRequired,
+    onCardMouseOut: PropTypes.func.isRequired
+  }
+
   render() {
     return (
       <div className='Hand'>
@@ -31,23 +38,11 @@ export default class App extends Component {
           handLength={this.props.cards.length}
           zoomState={this.props.ui.zoomedCard === card.id}
           selectState={this.props.ui.selectedCard === card.id}
-          onCardMouseOver={this.handleCardMouseOver}
-          onCardMouseOut={this.handleCardMouseOut}
-          onCardClick={this.handleCardClick}
+          onCardMouseOver={this.props.onCardMouseOver}
+          onCardMouseOut={this.props.onCardMouseOut}
+          onCardClick={this.props.onCardClick}
           {...card} />
       )
     })
-  }
-
-  handleCardClick(e, id) {
-    this.props.uiActs.selectCard(id)
-  }
-
-  handleCardMouseOver(e, id) {
-    this.props.uiActs.zoomCard(id)
-  }
-
-  handleCardMouseOut(e, id) {
-    this.props.uiActs.zoomCard(null)
   }
 }

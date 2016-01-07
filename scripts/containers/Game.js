@@ -41,10 +41,18 @@ export default class Game extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log('prev: ', prevProps.ui.attackingCard)
-    console.log('curr: ', this.props.ui.attackingCard)
-    if (this.props.ui.attackingCard && prevProps.ui.attackingCard !== this.props.ui.attackingCard) {
+    if (
+      this.props.ui.attackingCard
+      && prevProps.ui.attackingCard !== this.props.ui.attackingCard
+    ) {
       this.declareAttackAction()
+    }
+
+    if (
+      this.props.ui.blockingCard
+      && prevProps.ui.blockingCard !== this.props.ui.blockingCard
+    ) {
+      this.declareBlockCard()
     }
   }
 
@@ -106,7 +114,9 @@ export default class Game extends Component {
                 <div className='HandGroup-wrap'>
                   <Hand
                     ui={this.props.ui}
-                    uiActs={this.uiActs}
+                    onCardClick={this.handleHandCardClick}
+                    onCardMouseOut={this.handleHandCardMouseOut}
+                    onCardMouseOver={this.handleHandCardMouseOver}
                     cards={this.lookup.opponent.hand().map(id => this.lookup.card(id))}
                     opponent={true} />
                 </div>
@@ -145,7 +155,9 @@ export default class Game extends Component {
                 <div className='HandGroup-wrap'>
                   <Hand
                     ui={this.props.ui}
-                    uiActs={this.uiActs}
+                    onCardClick={this.handleHandCardClick}
+                    onCardMouseOut={this.handleHandCardMouseOut}
+                    onCardMouseOver={this.handleHandCardMouseOver}
                     cards={this.lookup.self.hand().map(id => this.lookup.card(id))} />
                 </div>
               </div>
@@ -194,46 +206,6 @@ export default class Game extends Component {
       </div>
     )
   }
-
-  // Getters for common state values
-  // get player() {
-  //   return this.props.game.state.players.find(player => player.playerId === this.props.game.currentPlayer)
-  // }
-
-  // get opponent() {
-  //   return this.props.game.state.players.find(player => player.playerId !== this.props.game.currentPlayer)
-  // }
-
-  // get playerHandCards() {
-  //   return this.player.hand.cardIds.map(id => this.props.game.cardList[id].value)
-  // }
-
-  // get opponentHandCards() {
-  //   return this.lookup.opponent.hand().map(id => this.lookup.card(id))
-  // }
-
-  // get playerDeckCards() {
-  //   return this.player.deck.cardIds
-  // }
-
-  // get opponentDeckCards() {
-  //   return this.opponent.deck.cardIds
-  // }
-
-  // get playerStructureCards() {
-  //   return this.player.deck.buildables.cardIds
-  // }
-
-  // get opponentStructureCards() {
-  //   return this.opponent.deck.buildables.cardIds
-  // }
-
-  // lookupCard(id) {
-  //   const card = this.props.game.cardList[id]
-  //   return card
-  //     ? card.value
-  //     : { id }
-  // }
 
   get playerDeckNodes() {
     return this.lookup.self.deck().map((card, i) => (
@@ -314,22 +286,83 @@ export default class Game extends Component {
             color={color}
             zoomState={this.props.ui.zoomedCard === id}
             selectState={this.props.ui.selectedCard === id}
-            onOrbClick={this.handleOrbClick}
-            onOrbOver={this.handleOrbMouseOver}
-            onOrbOut={this.handleOrbMouseOut} />
+            onOrbClick={this.handleWorkerClick}
+            onOrbOver={this.handleWorkerMouseOver}
+            onOrbOut={this.handleWorkerMouseOut} />
         )
       })
   }
 
-  handleOrbClick(e, id) {
-    this.uiActs.selectCard(id)
+  handleHandCardClick(e, id) {
+    if (this.props.game.state.currentPhase.name === 'Main Phase') {
+      if (this.lookup.self.hand().find(handId => handId === id))
+      this.uiActs.selectCard(id)
+    }
   }
 
-  handleOrbMouseOver(e, id) {
+  handleHandCardMouseOver(e, id) {
+    if (this.lookup.self.hand().find(handId => handId === id)) {
+      this.uiActs.zoomCard(id)
+    }
+  }
+
+  handleHandCardMouseOut(e, id) {
+    if (this.lookup.self.hand().find(handId => handId === id)) {
+      this.uiActs.zoomCard(null)
+    }
+  }
+
+  handleFieldCardClick(e, id) {
+    if (this.props.game.state.currentPhase.name === 'Attack Phase') {
+      this.uiActs.selectCard(id)
+    }
+
+    if (
+      // It's block phase
+      this.props.game.state.currentPhase.name === 'Block Phase'
+      // It's not your turn
+      && this.props.game.state.players[this.props.game.state.turn].playerId !== this.props.game.currentPlayer
+    ) {
+      if (
+        // There's no prompt queue
+        !this.props.game.state.promptQueue[0]
+        // The card is on your field
+        && this.lookup.self.field().find(fieldId => fieldId === id)
+      ) {
+        console.log('a')
+        this.uiActs.selectCard(id)
+      }
+      else if (
+        // There is a prompt queue
+        this.props.game.state.promptQueue[0]
+        // The card is targetable
+        && this.props.game.state.promptQueue[0].steps[this.props.game.state.promptQueue[0].currentStep].targetables.find(target => target.id === id)
+      ) {
+        console.log('b')
+        this.uiActs.selectCard(id)
+      }
+    }
+  }
+
+  handleFieldCardMouseOver(e, id) {
     this.uiActs.zoomCard(id)
   }
 
-  handleOrbMouseOut(e, id) {
+  handleFieldCardMouseOut(e, id) {
+    this.uiActs.zoomCard(null)
+  }
+
+  handleWorkerClick(e, id) {
+    if (this.props.game.state.currentPhase.name === 'Main Phase') {
+      this.uiActs.selectCard(id)
+    }
+  }
+
+  handleWorkerMouseOver(e, id) {
+    this.uiActs.zoomCard(id)
+  }
+
+  handleWorkerMouseOut(e, id) {
     this.uiActs.zoomCard(null)
   }
 
@@ -373,9 +406,9 @@ export default class Game extends Component {
             id={card.id}
             zoomState={this.props.ui.zoomedCard === card.id}
             selectState={this.props.ui.selectedCard === card.id}
-            onCardMouseOver={(e, id) => this.uiActs.zoomCard(id)}
-            onCardMouseOut={(e, id) => this.uiActs.zoomCard(null)}
-            onCardClick={(e, id) => this.uiActs.selectCard(id)}
+            onCardMouseOver={this.handleFieldCardMouseOver}
+            onCardMouseOut={this.handleFieldCardMouseOut}
+            onCardClick={this.handleFieldCardClick}
             {...card} />
         )
       })
@@ -413,6 +446,11 @@ export default class Game extends Component {
 
   UIAttackAction() {
     this.uiActs.declareAttackCard(this.props.ui.selectedCard)
+    this.uiActs.selectCard(null)
+  }
+
+  UIBlockAction() {
+    this.uiActs.declareBlockCard(this.props.ui.selectedCard)
     this.uiActs.selectCard(null)
   }
 
@@ -458,6 +496,19 @@ export default class Game extends Component {
     this.uiActs.declareAttackCard(null)
   }
 
+  declareBlockCard() {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Declare Blocker',
+        playerId: this.props.game.currentPlayer,
+        cardId: this.props.ui.blockingCard
+      }
+    })
+    this.uiActs.declareBlockCard(null)
+  }
+
   singleTargetPromptAction() {
     engine.send({
       eventType: engine.types.GAME_ACTION,
@@ -485,8 +536,18 @@ export default class Game extends Component {
     const cardId = this.props.ui.selectedCard
     if (!cardId) {
       return
-    } 
+    }
     
+    if (
+      this.props.game.state.currentPhase.name === 'Block Phase'
+      && this.props.game.state.players[this.props.game.state.turn].playerId !== this.props.game.currentPlayer
+      && this.inLocation('self', 'field', cardId)
+    ) {
+      return [
+        <button key={0} onClick={this.UIBlockAction}>Block</button>
+      ]
+    }
+
     if (this.inLocation('self', 'field', cardId)) {
       return [
         <button key={0} onClick={this.UIAttackAction}>Attack</button>
@@ -584,7 +645,7 @@ export default class Game extends Component {
       return (
         <div>
           <p>Targetting: {this.lookup.card(selectedCard).name}</p>
-          <button onClick={this.singleTargetPromptAction}>Attack</button>
+          <button onClick={this.singleTargetPromptAction}>Target</button>
         </div>
       )
     }

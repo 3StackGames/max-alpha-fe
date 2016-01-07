@@ -95,6 +95,7 @@ export default class MatchMaker extends Component {
   }
 
   handleGameFound(data) {
+    console.log(data)
     this.gameCode = data.gameCode
     this.gameActs.setGameCode(data.gameCode)
     this.gameActs.setPlayer(data.playerId)

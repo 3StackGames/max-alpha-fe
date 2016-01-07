@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as gameActs from '../ducks/game'
 import * as uiActs from '../ducks/ui'
-import { bindStateDecorator } from '../utils'
+import { bindStateDecorator, bindStateLookups } from '../utils'
 import {
   Hand,
   Card,
@@ -29,8 +29,15 @@ export default class Game extends Component {
       selectedCard: null
     }
 
+    this.lookup = bindStateLookups(this, this.props.game)
     this.gameActs = bindActionCreators(gameActs, props.dispatch)
     this.uiActs = bindActionCreators(uiActs, props.dispatch)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.game !== nextProps.game) {
+      this.lookup = bindStateLookups(this, nextProps.game)
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -98,7 +105,7 @@ export default class Game extends Component {
                   <Hand
                     ui={this.props.ui}
                     uiActs={this.uiActs}
-                    cards={this.opponentHandCards}
+                    cards={this.lookup.opponent.hand().map(id => this.lookup.card(id))}
                     opponent={true} />
                 </div>
                 <div className='CreatureGroup-wrap'>
@@ -137,7 +144,7 @@ export default class Game extends Component {
                   <Hand
                     ui={this.props.ui}
                     uiActs={this.uiActs}
-                    cards={this.playerHandCards} />
+                    cards={this.lookup.self.hand().map(id => this.lookup.card(id))} />
                 </div>
               </div>
             </div>
@@ -186,69 +193,90 @@ export default class Game extends Component {
     )
   }
 
-  get player() {
-    const { props } = this
-    return  props.game.state.players.find(player => player.playerId === props.game.currentPlayer)
-  }
-  get opponent() {
-    const { props } = this
-    return props.game.state.players.find(player => player.playerId !== props.game.currentPlayer)
-  }
+  // Getters for common state values
+  // get player() {
+  //   return this.props.game.state.players.find(player => player.playerId === this.props.game.currentPlayer)
+  // }
 
-  get playerHandCards() {
-    const { props } = this
-    return this.player.hand.cardIds.map(id => props.game.cardList[id].value)
-  }
+  // get opponent() {
+  //   return this.props.game.state.players.find(player => player.playerId !== this.props.game.currentPlayer)
+  // }
 
-  get opponentHandCards() {
-    const { props } = this
-    return this.opponent.hand.cardIds.map(id => ({ id }))
-  }
+  // get playerHandCards() {
+  //   return this.player.hand.cardIds.map(id => this.props.game.cardList[id].value)
+  // }
+
+  // get opponentHandCards() {
+  //   return this.lookup.opponent.hand().map(id => this.lookup.card(id))
+  // }
+
+  // get playerDeckCards() {
+  //   return this.player.deck.cardIds
+  // }
+
+  // get opponentDeckCards() {
+  //   return this.opponent.deck.cardIds
+  // }
+
+  // get playerStructureCards() {
+  //   return this.player.deck.buildables.cardIds
+  // }
+
+  // get opponentStructureCards() {
+  //   return this.opponent.deck.buildables.cardIds
+  // }
+
+  // lookupCard(id) {
+  //   const card = this.props.game.cardList[id]
+  //   return card
+  //     ? card.value
+  //     : { id }
+  // }
 
   get playerDeckNodes() {
-    return this.player.deck.cardIds.map((card, i) => (
+    return this.lookup.self.deck().map((card, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get opponentDeckNodes() {
-    return this.opponent.deck.cardIds.map((card, i) => (
+    return this.lookup.opponent.deck().map((id, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get playerStructureDeckNodes() {
-    return this.player.deck.buildables.cardIds.map((card, i) => (
+    return this.lookup.self.structures().map((id, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get opponentStructureDeckNodes() {
-    return this.opponent.deck.buildables.cardIds.map((card, i) => (
+    return this.lookup.opponent.structures().map((card, i) => (
       <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get playerGraveNodes() {
-    return this.player.grave.cardIds.map((card, i) => (
+    return this.lookup.self.grave().map((card, i) => (
       <div key={i} className='Grave-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get opponentGraveNodes() {
-    return this.opponent.grave.cardIds.map((card, i) => (
+    return this.lookup.opponent.grave().map((card, i) => (
       <div key={i} className='Grave-card Grave-card-opponent' style={{ transform: `translateX(${i * -0.25}px)` }}>
       </div>
     ))
   }
 
   get playerPoolNodes() {
-    const colorResources = this.player.resources.colors
+    const colorResources = this.lookup.self.player().resources.colors
     const nonemptyColorResources = Object.keys(colorResources)
       .filter(color => colorResources[color] > 0)
 
@@ -260,7 +288,7 @@ export default class Game extends Component {
   }
 
   get opponentPoolNodes() {
-    const colorResources = this.opponent.resources.colors
+    const colorResources = this.lookup.opponent.player().resources.colors
     const nonemptyColorResources = Object.keys(colorResources)
       .filter(color => colorResources[color] > 0)
 
@@ -272,11 +300,11 @@ export default class Game extends Component {
   }
 
   get playerWorkerNodes() {
-    return this.player.town.cardIds.length === 0
+    return this.lookup.self.town().length === 0
       ? 'none'
-      : this.player.town.cardIds
+      : this.lookup.self.town()
       .map((id, i) => {
-        const color = this.props.game.cardList[id].value.dominantColor.toUpperCase()
+        const color = this.lookup.card(id).dominantColor.toUpperCase()
         return (
           <WorkerOrb
             key={i}
@@ -308,17 +336,17 @@ export default class Game extends Component {
   }
 
   get playerCreatureNodes() {
-    return this._createNodes(this.player)
+    return this._createNodes('self')
   }
 
   get opponentCreatureNodes() {
-    return this.opponent.field.cardIds
-      .map(id => this.props.game.cardList[id].value)
+    return this.lookup.opponent.field()
+      .map(id => this.lookup.card(id))
       .map((card, i) => {
         return (
           <Card
             key={i}
-            shrink={this.opponent.field.cardIds.length > 6}
+            shrink={this.lookup.opponent.field().length > 6}
             type='field'
             id={card.id}
             zoomState={this.props.ui.zoomedCard === card.id}
@@ -332,13 +360,13 @@ export default class Game extends Component {
   }
 
   _createNodes(target) {
-    return target.field.cardIds
-      .map(id => this.props.game.cardList[id].value)
+    return this.lookup[target].field()
+      .map(id => this.lookup.card(id))
       .map((card, i) => {
         return (
           <Card
             key={i}
-            shrink={target.field.cardIds.length > 6}
+            shrink={this.lookup[target].field().length > 6}
             type='field'
             id={card.id}
             zoomState={this.props.ui.zoomedCard === card.id}
@@ -352,21 +380,23 @@ export default class Game extends Component {
   }
 
   get playerNexusNode() {
+    const castle = this.lookup.self.player().castle
     return (
       <div
         className='Nexus'
-        onClick={() => this.uiActs.selectCard(this.player.castle.id)}>
-        {this.player.castle.health}
+        onClick={() => this.uiActs.selectCard(castle.id)}>
+        {castle.currentHealth}
       </div>
     )
   }
 
   get opponentNexusNode() {
+    const castle = this.lookup.opponent.player().castle
     return (
       <div
         className='Nexus'
-        onClick={() => this.uiActs.selectCard(this.opponent.castle.id)}>
-        {this.opponent.castle.health}
+        onClick={() => this.uiActs.selectCard(castle.id)}>
+        {castle.currentHealth}
       </div>
     )
   }
@@ -454,20 +484,20 @@ export default class Game extends Component {
       return
     } 
     
-    if (this.inLocation('player', 'field', cardId)) {
+    if (this.inLocation('self', 'field', cardId)) {
       return [
         <button onClick={this.UIAttackAction}>Attack</button>
       ]
     }
 
-    if (this.inLocation('player', 'hand', cardId)) {
+    if (this.inLocation('self', 'hand', cardId)) {
       return [
         <button onClick={this.UIPlayAction}>Play</button>,
         <button onClick={this.assignAction}>Assign</button>
       ]
     }
 
-    if (this.inLocation('player', 'town', cardId)) {
+    if (this.inLocation('self', 'town', cardId)) {
       return [
         <button onClick={this.pullAction}>Pull</button>
       ]
@@ -475,7 +505,7 @@ export default class Game extends Component {
   }
 
   inLocation(target, location, findId) {
-    return this[target][location].cardIds.find(id => id === findId)
+    return this.lookup[target][location]().find(id => id === findId)
   }
 
   get actionUIViewNode() {
@@ -490,7 +520,7 @@ export default class Game extends Component {
 
   get playingActionUIViewNode() {
     const cardId = this.props.ui.playingCard
-    const playerResources = this.player.resources.colors
+    const playerResources = this.lookup.self.player().resources.colors
     const costButtonNodes = Object.keys(playerResources)
       .filter(color => playerResources[color] > 0)
       .map(color => {
@@ -505,7 +535,7 @@ export default class Game extends Component {
         )
       })
 
-    const card = this.props.game.cardList[cardId].value
+    const card = this.lookup.card(cardId)
     const cardCost = card.currentCost.colors
     const costNodes = Object.keys(cardCost)
       .filter(color => cardCost[color] > 0)
@@ -533,7 +563,7 @@ export default class Game extends Component {
     if (selectedCard) {
       return (
         <div>
-          <p>Targetting: {this.props.game.cardList[selectedCard].value.name}</p>
+          <p>Targetting: {this.lookup.card(selectedCard).name}</p>
           <button onClick={this.declareAttackAction}>Attack</button>
         </div>
       )
@@ -550,7 +580,7 @@ export default class Game extends Component {
     if (selectedCard) {
       return (
         <div>
-          <p>Targetting: {this.props.game.cardList[selectedCard].value.name}</p>
+          <p>Targetting: {this.lookup.card(selectedCard).name}</p>
           <button onClick={this.singleTargetPromptAction}>Attack</button>
         </div>
       )
@@ -568,7 +598,7 @@ export default class Game extends Component {
     }
 
     return (
-      <pre>{JSON.stringify(this.props.game.cardList[this.props.ui.zoomedCard], null, 2)}</pre>
+      <pre>{JSON.stringify(this.lookup.card(this.props.ui.zoomedCard), null, 2)}</pre>
     )
   }
 

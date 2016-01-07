@@ -5,8 +5,7 @@ import rootReducer from './ducks/reducer'
 
 const logger = createLogger()
 const configureStore = applyMiddleware(
-  thunk,
-  logger
+  thunk
 )(createStore)
 
 export default configureStore(rootReducer)

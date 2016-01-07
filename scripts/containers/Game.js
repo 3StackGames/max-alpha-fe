@@ -41,6 +41,8 @@ export default class Game extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('prev: ', prevProps.ui.attackingCard)
+    console.log('curr: ', this.props.ui.attackingCard)
     if (this.props.ui.attackingCard && prevProps.ui.attackingCard !== this.props.ui.attackingCard) {
       this.declareAttackAction()
     }
@@ -453,6 +455,7 @@ export default class Game extends Component {
         cardId: this.props.ui.attackingCard
       }
     })
+    this.uiActs.declareAttackCard(null)
   }
 
   singleTargetPromptAction() {
@@ -486,20 +489,20 @@ export default class Game extends Component {
     
     if (this.inLocation('self', 'field', cardId)) {
       return [
-        <button onClick={this.UIAttackAction}>Attack</button>
+        <button key={0} onClick={this.UIAttackAction}>Attack</button>
       ]
     }
 
     if (this.inLocation('self', 'hand', cardId)) {
       return [
-        <button onClick={this.UIPlayAction}>Play</button>,
-        <button onClick={this.assignAction}>Assign</button>
+        <button key={0} onClick={this.UIPlayAction}>Play</button>,
+        <button key={1} onClick={this.assignAction}>Assign</button>
       ]
     }
 
     if (this.inLocation('self', 'town', cardId)) {
       return [
-        <button onClick={this.pullAction}>Pull</button>
+        <button key={0} onClick={this.pullAction}>Pull</button>
       ]
     }
   }

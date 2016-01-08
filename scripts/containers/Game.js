@@ -126,13 +126,9 @@ export default class Game extends Component {
               </div>
             </div>
             <div className='FieldGroup UIBar'>
-              <div className='ActionView-wrap'>
-                <div className='ActionView'>
-                  {this.actionViewNode}
-                </div>
-              </div>
               <div className='ActionUIView-wrap'>
                 <div className='ActionUIView'>
+                  {this.actionViewNode}
                   {this.actionUIViewNode}
                 </div>
               </div>
@@ -480,7 +476,16 @@ export default class Game extends Component {
   }
 
   pullAction() {
-
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Pull Card',
+        playerId: this.props.game.currentPlayer,
+        cardId: this.props.ui.selectedCard,
+        cost: this.props.ui.cost
+      }
+    })
   }
 
   declareAttackAction() {

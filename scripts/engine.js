@@ -6,9 +6,7 @@ const config = {
 }
 const engine = Engine(config)
 engine.addOnAllMessages(data => {
-  if (data.eventType !== engine.types.STATE_UPDATE) {
-    console.log(data)
-  }
+  console.log(data)
 })
 
 export default engine

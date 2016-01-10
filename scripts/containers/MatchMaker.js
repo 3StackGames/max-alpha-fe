@@ -73,8 +73,9 @@ export default class MatchMaker extends Component {
   handleReadyGame() {
     engine.send({
       eventType: 'Player Ready',
+      playerId: this.state.playerId,
       gameCode: this.gameCode,
-      playerId: this.state.playerId
+      ready: true
     })
   }
 
@@ -95,10 +96,8 @@ export default class MatchMaker extends Component {
   }
 
   handleGameFound(data) {
-    console.log(data)
     this.gameCode = data.gameCode
     this.gameActs.setGameCode(data.gameCode)
-    this.gameActs.setPlayer(data.playerId)
   }
 
   handlePlayerId(e) {
@@ -114,7 +113,7 @@ export default class MatchMaker extends Component {
   }
 
   handleFindGame(e) {
-    e.target.disabled = true
+    // e.target.disabled = true
     engine.send({
       eventType: engine.types.FIND_GAME,
       playerId: this.state.playerId,

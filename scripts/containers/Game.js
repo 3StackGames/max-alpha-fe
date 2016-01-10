@@ -71,7 +71,7 @@ export default class Game extends Component {
               <div className='container-label'><span>DECK</span></div>
               <div className='deck-body'>
                 <div className='deck-placeholder'>
-                  {this.deckNodes('self')}
+                  {this.deckNodes('opponent')}
                 </div>
               </div>
             </div>
@@ -531,11 +531,11 @@ export default class Game extends Component {
   }
 
   playAction() {
-    const titleCaseColorCost = Object.keys(this.props.ui.cost.colors)
-      .reduce((acc, key) => {
-        acc[titleCase(key)] = this.props.ui.cost.colors[key]
-        return acc
-      }, {})
+    // const titleCaseColorCost = Object.keys(this.props.ui.cost.colors)
+    //   .reduce((acc, key) => {
+    //     acc[titleCase(key)] = this.props.ui.cost.colors[key]
+    //     return acc
+    //   }, {})
     engine.send({
       eventType: engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
@@ -543,9 +543,7 @@ export default class Game extends Component {
         type: 'Play Card',
         playerId: this.props.game.currentPlayer,
         cardId: this.props.ui.selectedCard,
-        cost: {
-          colors: titleCaseColorCost
-        }
+        cost: this.props.ui.cost
       }
     })
     this.uiActs.selectCard(null)

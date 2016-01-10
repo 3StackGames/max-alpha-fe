@@ -39,6 +39,10 @@ export default class Game extends Component {
     if (this.props.game !== nextProps.game) {
       this.lookup = bindStateLookups(this, nextProps.game)
     }
+
+    if (this.props.ui.playingCard && this.props.ui.selectedCard !== this.props.ui.playingCard) {
+      this.uiActs.cancelDeclaration()
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -220,13 +224,20 @@ export default class Game extends Component {
       ]
     }
     const card = this.lookup.card(zoomedCard)
+    const costNodes = Object.keys(card.currentCost.colors)
+      .filter(color => card.currentCost.colors[color] > 0)
+      .map(color => {
+      return (
+        <ResourceOrb key={color} color={color} value={card.currentCost.colors[color]} />
+      )
+  })
     return [
       <div key={0} className='zoom-image-group group'>
         <img className='zoom-image' src='http://placehold.it/200x200'/>
       </div>,
       <div key={1} className='zoom-info-group group'>
         <div className='zoom-name'>{card.name}</div>
-        <div className='zoom-cost'>(2)(x)(y)</div>
+        <div className='zoom-cost'>{costNodes}</div>
         <div className='zoom-stats-group group'>
           <div className='zoom-attack'>ATK: {card.attack}</div>
           <div className='zoom-health'>HP: {card.currentHealth}/{card.health}</div>
@@ -271,7 +282,7 @@ export default class Game extends Component {
             Object.keys(colorResources)
               .filter(color => colorResources[color] > 0)
               .map(color => (
-                <button onClick={() => this.uiActs.assignCost(color, (this.props.ui.cost.colors[titleCase(color)]) + 1)}>{color}: {this.props.ui.cost.colors[titleCase(color)]}</button>
+                <button onClick={() => this.uiActs.assignCost(color, (this.props.ui.cost.colors[color]) + 1)}>{color}: {this.props.ui.cost.colors[color]}</button>
               ))
           }
         </div>,
@@ -288,7 +299,7 @@ export default class Game extends Component {
       ]
     }
 
-    if (this.inLocation('self', 'field', selectedCard)) {
+    if (this.inLocation('self', 'creatures', selectedCard)) {
       return [
         <div key={0} className='prompt-item'><button onClick={this.UIAttackAction}>Attack</button></div>
       ]
@@ -314,12 +325,12 @@ export default class Game extends Component {
   }
 
   creatureNodes(target) {
-    return this.lookup[target].field()
+    return this.lookup[target].creatures()
       .map(this.mapIdToCard)
       .map((card, i) => (
         <Card
           key={i}
-          shrink={this.lookup[target].field().length > 6}
+          shrink={this.lookup[target].creatures().length > 6}
           type='field'
           id={card.id}
           zoomState={this.props.ui.zoomedCard === card.id}
@@ -452,7 +463,7 @@ export default class Game extends Component {
         // There's no prompt queue
         !this.props.game.state.promptQueue[0]
         // The card is on your field
-        && this.lookup.self.field().find(fieldId => fieldId === id)
+        && this.lookup.self.creatures().find(fieldId => fieldId === id)
       ) {
         this.uiActs.selectCard(id)
       }
@@ -541,8 +552,7 @@ export default class Game extends Component {
       action: {
         type: 'Pull Card',
         playerId: this.props.game.currentPlayer,
-        cardId: this.props.ui.selectedCard,
-        cost: this.props.ui.cost
+        cardId: this.props.ui.selectedCard
       }
     })
   }
@@ -602,7 +612,7 @@ export default class Game extends Component {
     const costButtonNodes = Object.keys(playerResources)
       .filter(color => playerResources[color] > 0)
       .map(color => {
-        const colorValue = this.props.ui.cost.colors[titleCase(color)] || 0
+        const colorValue = this.props.ui.cost.colors[color] || 0
         return (
           <div key={color}>
             <button

@@ -9,6 +9,16 @@ const DECLARE_BLOCK_CARD = 'max-alpha/ui/DECLARE_BLOCK_CARD'
 const ASSIGN_TARGET = 'max-alpha/ui/ASSIGN_TARGET'
 const CANCEL_DECLARATION = 'max-alpha/ui/CANCEL_DECLARATION'
 
+const initialColors = {
+  COLORLESS: 0,
+  RED: 0,
+  BLUE: 0,
+  WHITE: 0,
+  BLACK: 0,
+  GREEN: 0,
+  YELLOW: 0
+}
+
 const initialState = {
   selectedCard: null,
   zoomedCard: null,
@@ -17,15 +27,7 @@ const initialState = {
   blockingCard: null,
   targetCard: null,
   cost: {
-    colors: {
-      Colorless: 0,
-      Red: 0,
-      Blue: 0,
-      White: 0,
-      Black: 0,
-      Green: 0,
-      Yellow: 0
-    }
+    colors: initialColors
   }
 }
 const reducer = (state = initialState, action) => {
@@ -47,7 +49,7 @@ const reducer = (state = initialState, action) => {
           ...state,
           playingCard: null,
           cost: {
-            colors: {}
+            colors: initialColors
           }
         }
       }
@@ -101,7 +103,7 @@ const reducer = (state = initialState, action) => {
         playingCard: null,
         attackingCard: null,
         cost: {
-          colors: {}
+          colors: initialColors
         }
       }
     default:
@@ -135,7 +137,7 @@ export const assignCost = (color, value) => {
     type: ASSIGN_COST,
     payload: {
       value,
-      color: titleCase(color)
+      color: color
     }
   }
 }

@@ -25,104 +25,82 @@ export const keys = {
      YELLOW: 'YELLOW'
 }
 
-function lookupCard(game, id) {
+const lookupCard = (game, id) => {
   const card = game.cardList[id]
   return card.value || { id }
 }
 
-function self(game) {
-  return game.state.players
+const self = (game) =>
+  game.state.players
     .find(player => player.playerId === game.currentPlayer)
-}
 
-function opponent(game) {
-  return game.state.players
+const opponent = (game) =>
+  game.state.players
     .find(player => player.playerId !== game.currentPlayer)
-}
 
-function lookupHand(target) {
-  return target.hand.cardIds
-}
+const lookupHand = (target) =>
+  target.hand.cardIds
 
-function selfHand(game) {
-  return R.pipe(self, lookupHand)(game)
-}
+const selfHand = (game) =>
+  R.pipe(self, lookupHand)(game)
 
-function opponentHand(game) {
-  return R.pipe(opponent, lookupHand)(game)
-}
+const opponentHand = (game) =>
+  R.pipe(opponent, lookupHand)(game)
 
-function lookupDeck(target) {
-  return target.deck.cardIds
-}
+const lookupDeck = (target) =>
+  target.deck.cardIds
 
-function selfDeck(game) {
-  return R.pipe(self, lookupDeck)(game)
-}
+const selfDeck = (game) =>
+  R.pipe(self, lookupDeck)(game)
 
-function opponentDeck(game) {
-  return R.pipe(opponent, lookupDeck)(game)
-}
+const opponentDeck = (game) =>
+  R.pipe(opponent, lookupDeck)(game)
 
-function lookupStructures(target) {
-  return target.deck.buildables.cardIds
-}
+const lookupStructures = (target) =>
+  target.deck.buildables.cardIds
 
-function selfStructures(game) { 
-  return R.pipe(self, lookupStructures)(game)
-}
+const selfStructures = (game) =>
+  R.pipe(self, lookupStructures)(game)
 
-function opponentStructures(game) {
-  return R.pipe(opponent, lookupStructures)(game)
-}
+const opponentStructures = (game) =>
+  R.pipe(opponent, lookupStructures)(game)
 
-function lookupGrave(target) {
-  return target.grave.cardIds
-}
+const lookupGrave = (target) =>
+  target.grave.cardIds
 
-function selfGrave(game) {
-  return R.pipe(self, lookupGrave)(game)
-}
+const selfGrave = (game) =>
+  R.pipe(self, lookupGrave)(game)
 
-function opponentGrave(game) {
-  return R.pipe(opponent, lookupGrave)(game)
-}
+const opponentGrave = (game) =>
+  R.pipe(opponent, lookupGrave)(game)
 
-function lookupField(target) {
-  return target.field.cardIds
-}
+const lookupCreatures = (target) =>
+  target.field.creatures.cardIds
 
-function selfField(game) {
-  return R.pipe(self, lookupField)(game)
-}
+const selfCreatures = (game) =>
+  R.pipe(self, lookupCreatures)(game)
 
-function opponentField(game) {
-  return R.pipe(opponent, lookupField)(game)
-}
+const opponentCreatures = (game) =>
+  R.pipe(opponent, lookupCreatures)(game)
 
-function lookupCourtyard(target) {
-  return target.courtyard.cardIds
-}
+const lookupCourtyard = (target) =>
+  target.courtyard.cardIds
 
-function selfCourtyard(game) {
-  return R.pipe(self, lookupCourtyard)(game)
-}
+const selfCourtyard = (game) =>
+  R.pipe(self, lookupCourtyard)(game)
 
-function opponentCourtyard(game) {
-  return R.pipe(opponent, lookupCourtyard)(game)
-}
+const opponentCourtyard = (game) =>
+  R.pipe(opponent, lookupCourtyard)(game)
 
-function lookupTown(target) {
-  return target.town.cardIds
-}
+const lookupTown = (target) =>
+  target.town.cardIds
 
-function selfTown(game) {
-  return R.pipe(self, lookupTown)(game)
-}
+const selfTown = (game) =>
+  R.pipe(self, lookupTown)(game)
 
-function opponentTown(game) {
-  return R.pipe(opponent, lookupTown)(game)
-}
+const opponentTown = (game) =>
+  R.pipe(opponent, lookupTown)(game)
+
 
 const stateLookups = {
   card: lookupCard,
@@ -132,7 +110,7 @@ const stateLookups = {
     deck: selfDeck,
     structures: selfStructures,
     grave: selfGrave,
-    field: selfField,
+    creatures: selfCreatures,
     courtyard: selfCourtyard,
     town: selfTown
   },
@@ -142,7 +120,7 @@ const stateLookups = {
     deck: opponentDeck,
     structures: opponentStructures,
     grave: opponentGrave,
-    field: opponentField,
+    creatures: opponentCreatures,
     courtyard: opponentCourtyard,
     town: opponentTown
   }

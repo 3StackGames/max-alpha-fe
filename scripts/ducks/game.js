@@ -14,13 +14,7 @@ const reducer = (state = initialState, action) => {
     case STATE_UPDATE:
       return {
         ...state,
-        state: payload.state,
-        cardList: payload.cardList
-      }
-    case SET_PLAYER:
-      return {
-        ...state,
-        currentPlayer: payload
+        ...payload
       }
     case SET_GAME_CODE:
       return {

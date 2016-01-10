@@ -18,7 +18,7 @@ export default class App extends Component {
     onCardClick: PropTypes.func.isRequired,
     onCardMouseOver: PropTypes.func.isRequired,
     onCardMouseOut: PropTypes.func.isRequired
-  }
+  };
 
   render() {
     return (

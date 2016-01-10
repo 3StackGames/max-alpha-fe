@@ -1,0 +1,251 @@
+$collections-width = 160px
+$courtyard-width = 220px
+$resources-width = 240px
+$castles-width = $resources-width
+$actions-height = 140px
+$hand-height = 90px
+
+.board-container,
+.board-container div
+  box-sizing: border-box
+  // border: 1px solid black
+
+.board-container
+  display: flex
+  flex-direction: column
+  height: 100%
+  overflow-y: hidden
+
+.opponent-container,
+.self-container,
+.actions-container
+  display: flex
+
+.opponent-container,
+.self-container
+  flex: 1
+    
+.actions-container
+  height: $actions-height
+
+.collections-container
+  width: $collections-width
+  display: flex
+  flex-direction: column
+  
+  .structures-container,
+  .grave-container,
+  .deck-container
+    flex: 1
+    display: flex
+    
+    .structures-body,
+    .grave-body,
+    .deck-body
+      flex: 1
+      
+    .container-label span
+      transform: rotateZ(-90deg)
+      
+.courtyard-container
+  width: $courtyard-width
+  display: flex
+  flex-direction: column
+  background: #fafafa
+  border: 1px solid #f0f0f0
+
+.playing-container
+  flex: 1
+  display: flex
+  flex-direction: column
+
+.resources-container
+  width: $resources-width
+  display: flex
+  flex-direction: column
+
+.resource-indicator-container,
+.town-container
+  flex: 1
+  display: flex
+  
+  .container-label span 
+    transform: rotateZ(90deg)
+
+.town-body
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-wrap: wrap
+
+.resource-indicator-body
+  flex: 1
+  display: flex
+  flex-direction: column
+  justify-content: center
+  .resource-row
+    display: flex
+    justify-content: center
+    
+
+.opponent-container .hand-container
+  position: relative
+  transform: rotateZ(180deg)
+
+.hand-container
+  height: $hand-height
+  position: relative
+  
+  .Hand
+    display: flex
+    justify-content: center
+    height: 100%
+
+    .Card
+      display: inline-block
+      transition: transform 250ms ease
+      transform: rotateX(35deg) scale(0.9)
+      transform-origin: center bottom
+      
+      &.Card-opponent
+        .Card-back
+          transform-origin: center top
+
+        &:hover
+          // transform: rotateX(0) translateY(10px)
+        
+
+      &:hover
+        transition: transform 250ms ease
+        transform: rotateX(0) translateY(-10px)
+        transform-origin: center bottom
+        box-shadow: none
+        z-index: 9
+    
+    .card
+      display: inline-block
+
+      &:not(:last-child)
+        margin-right: -30px
+
+.field-container
+  flex: 1
+  display: flex
+  justify-content: center
+  align-items: center
+
+.zoom-container
+  width: 0
+  z-index: 2
+
+.zoom-body
+  width: 50vw
+  transform: translateX(-50vw)
+  opacity: 0
+  height: 100%
+  transition: all 250ms ease
+  display: flex
+  background: white
+  position: relative
+  box-shadow 0px 1px 6px 0px rgba(0,0,0,0.1)
+    
+
+.zoom-info-group,
+.zoom-effects-group
+  padding: 8px 30px
+
+.zoom-image
+  height: 100%
+  width: auto
+
+.zoom-info-group
+  display: flex
+  flex-direction: column
+  > div
+    flex: 1
+
+.zoom-stats-group
+  display: flex
+
+.zoom-health
+  margin-left: 15px
+
+.prompt-container
+  // margin-left: $collections-width + $courtyard-width
+  flex: 1
+  transition: all 250ms ease
+  background: blue
+  display: flex
+  flex-direction: column
+  justify-content: space-around
+  align-items: center
+  padding: 8px 0
+
+.phase-container
+  width: $collections-width + $courtyard-width
+  display: flex
+  flex-direction: column
+  justify-content: center
+  align-items: center
+  
+  .group
+    flex: 1
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+
+.castles-container
+  width: $castles-width
+  display: flex
+  flex-direction: column
+  
+  .castle-body
+    display: flex
+    flex: 1
+    justify-content: center
+    align-items: center
+    font-size:  32px
+
+.container-label
+  width: 20px
+  display: flex
+  position: relative
+  justify-content: center
+  align-items: center
+  
+  span
+    font-size: 12px
+
+.deck-body
+  transform: rotateZ(90deg)
+  display: flex
+  justify-content: center
+  align-items: center
+
+.deck-placeholder
+  position: relative
+  width: 80px
+  height: 122px
+  transform: scale(0.7)
+
+.FaceDownCard-deck
+  position: absolute
+  background-image: url(http://placehold.it/80x122)
+  width: 80px
+  height: 122px
+  border: 1px solid #a0a0a0
+  // position: absolute
+  // transform: rotateZ(90deg)
+  // height: 100%
+  // width: 80px
+  // margin-left: auto
+  // border: 1px solid transparentify(black, 0.1)
+
+.actions-container--zoomed
+  .zoom-body
+    transform: translateX(0)
+    opacity: 1
+
+  .prompt-container
+    margin-left: 0

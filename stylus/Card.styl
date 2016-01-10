@@ -1,10 +1,11 @@
 .Card
+  width: 80px
   display: flex
   flex-direction: column
   background: #fff
 
   &-body
-    width: 80px
+    width: 100%
     border: 1px solid $card-border-color
     border-radius: $card-border-radius
     overflow-y: hidden
@@ -75,7 +76,7 @@
       cursor: pointer
   
   &-shrink
-    width: 60px
+    transform: scale(0.9)
 
   &--zoom
     box-shadow: $card-state-shadow $card-zoom-shadow-color

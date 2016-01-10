@@ -17,7 +17,15 @@ const initialState = {
   blockingCard: null,
   targetCard: null,
   cost: {
-    colors: {}
+    colors: {
+      Colorless: 0,
+      Red: 0,
+      Blue: 0,
+      White: 0,
+      Black: 0,
+      Green: 0,
+      Yellow: 0
+    }
   }
 }
 const reducer = (state = initialState, action) => {

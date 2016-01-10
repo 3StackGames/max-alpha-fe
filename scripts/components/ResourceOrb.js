@@ -1,10 +1,16 @@
 import React from 'react'
+import cx from 'classname'
 import R from 'ramda'
 import { keys } from '../utils'
 
 const ResourceOrb = ({ color, value }) => {
   return (
-    <span className={`ResourceOrb ResourceOrb-${color.toLowerCase()}`}>{value}</span>
+    <span
+      className={cx(`ResourceOrb ResourceOrb-${color.toLowerCase()}`, {
+        'ResourceOrb--empty': value === 0
+      })}>
+      {value}
+    </span>
   )
 
   // if (color === keys.COLORLESS) {

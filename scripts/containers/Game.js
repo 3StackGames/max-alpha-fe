@@ -12,7 +12,8 @@ import {
   Hand,
   Card,
   ResourceOrb,
-  WorkerOrb
+  WorkerOrb,
+  FaceDownCard
 } from '../components'
 import titleCase from 'title-case'
 
@@ -59,142 +60,141 @@ export default class Game extends Component {
   render() {
     const { props } = this
     return (
-      <div className='Field'>
-        <div className='Field-wrap'>
-          <div className='LeftField'>
-            <div className='LeftField-section LeftField-Opponent'>
-              <div className='Deck-wrap FieldGroup'>
-                <div className='Deck'>
-                  <label className='FieldGroup-label'>DECK</label>
-                  {this.opponentDeckNodes}
-                </div>
-              </div>
-              <div className='Grave-wrap FieldGroup'>
-                <div className='Deck Grave'>
-                  <label className='FieldGroup-label'>GRAVE</label>
-                  {this.opponentGraveNodes}
-                </div>
-              </div>
-              <div className='StructureDeck-wrap FieldGroup'>
-                <div className='Deck StructureDeck'>
-                  <label className='FieldGroup-label'>STRUCTS</label>
-                  {this.opponentStructureDeckNodes}
+      <div className='board-container'>
+        <div className='opponent-container'>
+          <div className='collections-container'>
+            <div className='deck-container'>
+              <div className='container-label'><span>DECK</span></div>
+              <div className='deck-body'>
+                <div className='deck-placeholder'>
+                  {this.deckNodes('self')}
                 </div>
               </div>
             </div>
-            <div className='LeftField-section LeftField-Player'>
-              <div className='Grave-wrap FieldGroup'>
-                <div className='Deck Grave'>
-                  <label className='FieldGroup-label'>GRAVE</label>
-                  {this.playerGraveNodes}
-                </div>
+            <div className='grave-container'>
+              <div className='container-label'><span>GRAVE</span></div>
+              <div className='grave-body'>
               </div>
-              <div className='StructureDeck-wrap FieldGroup'>
-                <div className='Deck StructureDeck'>
-                  <label className='FieldGroup-label'>STRUCTS</label>
-                  {this.playerStructureDeckNodes}
-                </div>
+            </div>
+            <div className='structures-container'>
+              <div className='container-label'><span>STRUCTS</span></div>
+              <div className='structures-body'>
               </div>
-              <div className='Deck-wrap FieldGroup'>
-                <div className='Deck'>
-                  <label className='FieldGroup-label'>DECK</label>
-                  {this.playerDeckNodes}
+            </div>
+          </div>
+          <div className='courtyard-container'>
+          </div>
+          <div className='playing-container'>
+            <div className='hand-container'>
+              {this.handNodes('opponent')}
+            </div>
+            <div className='field-container'>
+              {this.creatureNodes('opponent')}
+            </div>
+          </div>
+          <div className='resources-container'>
+            <div className='town-container'>
+              <div className='town-body'>
+                {this.townNodes('opponent')}
+              </div>
+              <div className='container-label'><span></span></div>
+            </div>
+            <div className='resource-indicator-container'>
+              <div className='resource-indicator-body'>
+                <div className='resource-row'>
+                  {this.resourceNode('opponent', 'BLUE')}
+                  {this.resourceNode('opponent', 'WHITE')}
+                </div>
+                <div className='resource-row'>
+                  {this.resourceNode('opponent', 'RED')}
+                  {this.resourceNode('opponent', 'COLORLESS')}
+                  {this.resourceNode('opponent', 'GREEN')}
+                </div>
+                <div className='resource-row'>
+                  {this.resourceNode('opponent', 'YELLOW')}
+                  {this.resourceNode('opponent', 'BLACK')}
                 </div>
               </div>
             </div>
           </div>
-          <div className='CenterField'>
-            <div className='FieldGroup CenterField-Player'>
-              <div className='LeftGroup'>
-                <div className='StructGroup-wrap'>
-                  Structures
-                </div>
-              </div>
-              <div className='RightGroup'>
-                <div className='HandGroup-wrap'>
-                  <Hand
-                    ui={this.props.ui}
-                    onCardClick={this.handleHandCardClick}
-                    onCardMouseOut={this.handleHandCardMouseOut}
-                    onCardMouseOver={this.handleHandCardMouseOver}
-                    cards={this.lookup.opponent.hand().map(id => this.lookup.card(id))}
-                    opponent={true} />
-                </div>
-                <div className='CreatureGroup-wrap'>
-                  {this.opponentCreatureNodes}
-                </div>
+        </div>
+        <div className={cx('actions-container', {
+            'actions-container--zoomed': this.props.ui.zoomedCard
+          })}>
+          <div className='zoom-container'>
+            <div className='zoom-body'>
+              {this.zoomNode}
+            </div>
+          </div>
+          <div className='phase-container'>
+            <div className='currentphase-group group'>
+              {this.props.game.state.currentPhase.name}
+            </div>
+            <div className='endphase-group group'>
+              {this.endPhaseNode}
+            </div>
+          </div>
+          <div className='prompt-container'>
+            {this.promptNode}
+          </div>
+          <div className='castles-container'>
+            <div className='castle-body'>{this.lookup.opponent.player().castle.currentHealth}</div>
+            <div className='castle-body'>{this.lookup.self.player().castle.currentHealth}</div>
+          </div>
+        </div>
+        <div className='self-container'>
+          <div className='collections-container'>
+            <div className='structures-container'>
+              <div className='container-label'><span>STRUCTS</span></div>
+              <div className='structures-body'>
               </div>
             </div>
-            <div className='FieldGroup UIBar'>
-              <div className='ActionUIView-wrap'>
-                <div className='ActionUIView'>
-                  {this.actionViewNode}
-                  {this.actionUIViewNode}
-                </div>
-              </div>
-              <div className='ZoomView-wrap'>
-                <div className='ZoomView'>
-                  {this.zoomViewNode}
-                </div>
+            <div className='grave-container'>
+              <div className='container-label'><span>GRAVE</span></div>
+              <div className='grave-body'>
               </div>
             </div>
-            <div className='FieldGroup CenterField-Player'>
-              <div className='LeftGroup'>
-                <div className='StructGroup-wrap'>
-                  Structures
-                </div>
-              </div>
-              <div className='RightGroup'>
-                <div className='CreatureGroup-wrap'>
-                  {this.playerCreatureNodes}
-                </div>
-                <div className='HandGroup-wrap'>
-                  <Hand
-                    ui={this.props.ui}
-                    onCardClick={this.handleHandCardClick}
-                    onCardMouseOut={this.handleHandCardMouseOut}
-                    onCardMouseOver={this.handleHandCardMouseOver}
-                    cards={this.lookup.self.hand().map(id => this.lookup.card(id))} />
+            <div className='deck-container'>
+              <div className='container-label'><span>DECK</span></div>
+              <div className='deck-body'>
+                <div className='deck-placeholder'>
+                  {this.deckNodes('self')}
                 </div>
               </div>
             </div>
           </div>
-          <div className='RightField'>
-            <div className='RightField-section RightField-opponent'>
-              <div className='ResourcePane-wrap FieldGroup'>
-                <div className='ResourcePane-pool'>
-                  <div>Resources</div>
-                  {this.opponentPoolNodes}
+          <div className='courtyard-container'>
+          </div>
+          <div className='playing-container'>
+            <div className='field-container'>
+              {this.creatureNodes('self')}
+            </div>
+            <div className='hand-container'>
+              {this.handNodes('self')}
+            </div>
+          </div>
+          <div className='resources-container'>
+            <div className='resource-indicator-container'>
+              <div className='resource-indicator-body'>
+                <div className='resource-row'>
+                  {this.resourceNode('self', 'BLUE')}
+                  {this.resourceNode('self', 'WHITE')}
                 </div>
-                <div className='ResourcePane-workers'>
-                  <div>Workers</div>
-                  {this.opponentWorkerNodes}
+                <div className='resource-row'>
+                  {this.resourceNode('self', 'RED')}
+                  {this.resourceNode('self', 'COLORLESS')}
+                  {this.resourceNode('self', 'GREEN')}
                 </div>
-              </div>
-              <div className='NexusPane-wrap FieldGroup'>
-                <div className='Nexus'>
-                  {this.opponentNexusNode}
+                <div className='resource-row'>
+                  {this.resourceNode('self', 'YELLOW')}
+                  {this.resourceNode('self', 'BLACK')}
                 </div>
               </div>
             </div>
-            <div className='RightField-section'>
-              <div className='PhaseAction-wrap'>
-                {this.phaseActionNode}
-              </div>
-            </div>
-            <div className='RightField-section RightField-player'>
-              <div className='NexusPane-wrap FieldGroup'>
-                {this.playerNexusNode}
-              </div>
-              <div className='ResourcePane-wrap FieldGroup'>
-                <div className='ResourcePane-pool'>
-                  <div>Resources</div>
-                  {this.playerPoolNodes}
-                </div>
-                <div className='ResourcePane-workers'>
-                  <div>Workers</div>
-                  {this.playerWorkerNodes}
-                </div>
+            <div className='town-container'>
+              <div className='container-label'><span></span></div>
+              <div className='town-body'>
+                {this.townNodes('self')}
               </div>
             </div>
           </div>
@@ -203,75 +203,138 @@ export default class Game extends Component {
     )
   }
 
-  get playerDeckNodes() {
-    return this.lookup.self.deck().map((card, i) => (
-      <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
-      </div>
-    ))
+  mapIdToCard(id) {
+    return this.lookup.card(id)
   }
 
-  get opponentDeckNodes() {
-    return this.lookup.opponent.deck().map((id, i) => (
-      <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
+  get zoomNode() {
+    const { zoomedCard } = this.props.ui
+    if (!zoomedCard) {
+      return [
+        <div key={0} className='zoom-image-group group'>
+        </div>,
+        <div key={1} className='zoom-info-group group'>
+        </div>,
+        <div key={2} className='zoom-effects-group group'>
+        </div>
+      ]
+    }
+    const card = this.lookup.card(zoomedCard)
+    return [
+      <div key={0} className='zoom-image-group group'>
+        <img className='zoom-image' src='http://placehold.it/200x200'/>
+      </div>,
+      <div key={1} className='zoom-info-group group'>
+        <div className='zoom-name'>{card.name}</div>
+        <div className='zoom-cost'>(2)(x)(y)</div>
+        <div className='zoom-stats-group group'>
+          <div className='zoom-attack'>ATK: {card.attack}</div>
+          <div className='zoom-health'>HP: {card.currentHealth}/{card.health}</div>
+        </div>
+      </div>,
+      <div key={2} className='zoom-effects-group group'>
+        <div className='zoom-effect'>Some effect that this card has.</div>
       </div>
-    ))
+    ]
   }
 
-  get playerStructureDeckNodes() {
-    return this.lookup.self.structures().map((id, i) => (
-      <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
-      </div>
-    ))
+  get promptNode() {
+    const { selectedCard, playingCard } = this.props.ui
+    const { promptQueue } = this.props.game.state
+
+    if (
+      !selectedCard
+      && !playingCard
+      && promptQueue.length === 0
+    ) {
+      return
+    }
+
+    // if (promptQueue.length > 0) {
+    //   const promptHead = promptQueue[0]
+    //   const step = promptHead.steps[promptHead.currentStep]
+
+    //   return [
+    //     <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + this.lookup.card(selectedCard).name : 'Select a target'}</div>,
+    //     <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
+    //   ]
+    // }
+
+    if (playingCard) {
+      const colorResources = this.lookup.self.player().resources.colors
+      return [
+        <div key={0} className='prompt-item'>
+          Cost: (1)(2)(3)
+        </div>,
+        <div key={1} className='prompt-item'>
+          {
+            Object.keys(colorResources)
+              .filter(color => colorResources[color] > 0)
+              .map(color => (
+                <button onClick={() => this.uiActs.assignCost(color, (this.props.ui.cost.colors[titleCase(color)]) + 1)}>{color}: {this.props.ui.cost.colors[titleCase(color)]}</button>
+              ))
+          }
+        </div>,
+        <div key={2} className='prompt-item'>
+          <button onClick={this.playAction}>PLAY</button>
+        </div>
+      ]
+    }
+
+    if (this.inLocation('self', 'hand', selectedCard)) {
+      return [
+        <div key={0} className='prompt-item'><button onClick={this.UIPlayAction}>Play</button></div>,
+        <div key={1} className='prompt-item'><button onClick={this.assignAction}>Assign</button></div>
+      ]
+    }
+
+    if (this.inLocation('self', 'field', selectedCard)) {
+      return [
+        <div key={0} className='prompt-item'><button onClick={this.UIAttackAction}>Attack</button></div>
+      ]
+    }
+
+    if (this.inLocation('self', 'town', selectedCard)) {
+      return [
+        <div key={0} className='prompt-item'><button onClick={this.pullAction}>Pull</button></div>
+      ]
+    }
   }
 
-  get opponentStructureDeckNodes() {
-    return this.lookup.opponent.structures().map((card, i) => (
-      <div key={i} className='Deck-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
-      </div>
-    ))
+  handNodes(target) {
+    return (
+      <Hand
+        ui={this.props.ui}
+        cards={this.lookup[target].hand().map(this.mapIdToCard)}
+        onCardClick={this.handleHandCardClick}
+        onCardMouseOver={this.handleHandCardMouseOver}
+        onCardMouseOut={this.handleHandCardMouseOut}
+        opponent={target === 'opponent'} />
+    )
   }
 
-  get playerGraveNodes() {
-    return this.lookup.self.grave().map((card, i) => (
-      <div key={i} className='Grave-card' style={{ transform: `translateX(${i * -0.25}px)` }}>
-      </div>
-    ))
-  }
-
-  get opponentGraveNodes() {
-    return this.lookup.opponent.grave().map((card, i) => (
-      <div key={i} className='Grave-card Grave-card-opponent' style={{ transform: `translateX(${i * -0.25}px)` }}>
-      </div>
-    ))
-  }
-
-  get playerPoolNodes() {
-    const colorResources = this.lookup.self.player().resources.colors
-    const nonemptyColorResources = Object.keys(colorResources)
-      .filter(color => colorResources[color] > 0)
-
-    return nonemptyColorResources.length === 0
-      ? 'none'
-      : nonemptyColorResources.map((color, i) => (
-        <ResourceOrb key={i} color={color} value={colorResources[color]} />
+  creatureNodes(target) {
+    return this.lookup[target].field()
+      .map(this.mapIdToCard)
+      .map((card, i) => (
+        <Card
+          key={i}
+          shrink={this.lookup[target].field().length > 6}
+          type='field'
+          id={card.id}
+          zoomState={this.props.ui.zoomedCard === card.id}
+          selectState={this.props.ui.selectedCard === card.id}
+          onCardClick={this.handleFieldCardClick}
+          onCardMouseOver={this.handleFieldCardMouseOver}
+          onCardMouseOut={this.handleFieldCardMouseOut}
+          {...card} />
       ))
   }
 
-  get opponentPoolNodes() {
-    const colorResources = this.lookup.opponent.player().resources.colors
-    const nonemptyColorResources = Object.keys(colorResources)
-      .filter(color => colorResources[color] > 0)
-
-    return nonemptyColorResources.length === 0
-      ? 'none'
-      : nonemptyColorResources.map((color, i) => (
-        <ResourceOrb key={i} color={color} value={colorResources[color]} />
-      ))
-  }
-
-  get playerWorkerNodes() {
-    return this.lookup.self.town().length === 0
-      ? 'none'
+  townNodes(target) {
+    const town = this.lookup[target].town()
+    return town.length === 0
+      ? 'No workers'
       : this.lookup.self.town()
       .map((id, i) => {
         const color = this.lookup.card(id).dominantColor.toUpperCase()
@@ -289,9 +352,75 @@ export default class Game extends Component {
       })
   }
 
+  resourceNode(target, color) {
+    return (
+      <ResourceOrb
+        color={color}
+        value={this.lookup[target].player().resources.colors[color]} />
+    )
+  }
+
+  deckNodes(target) {
+    return this.lookup[target].deck().map((id, i) => (
+      <FaceDownCard
+        style={{ transform: `translateX(${ i * -0.25 }px)` }}
+        key={i}
+        type='deck' />
+    ))
+  }
+
+  get endPhaseNode() {
+    if (this.isTurn('self')) {
+      if (this.isPhase('Main Phase')) {
+        if (this.props.game.state.combatEnded) {
+          <button onClick={this.finishPhaseAction}>END TURN</button>
+        }
+        return (
+          <button onClick={this.finishPhaseAction}>Finish Main</button>
+        )
+      }
+
+      if (this.isPhase('Attack Phase')) {
+        return (
+          <button onClick={this.finishPhaseAction}>Launch Attack</button>
+        )
+      }
+    }
+
+    if (this.isTurn('opponent')) {
+      if (this.isPhase('Block Phase')) {
+        return (
+          <button
+            onClick={this.finishPhaseAction}>
+            Finish Blocking
+          </button>
+        )
+      }
+    }
+  }
+
+  isPhase(name) {
+    return this.props.game.state.currentPhase.name === name
+  }
+
+  isTurn(target) {
+    const turnPlayerId = this.props.game.state.players[this.props.game.state.turn].playerId
+    const { currentPlayer } = this.props.game
+    if (target === 'self') {
+      return turnPlayerId === currentPlayer
+    }
+    if (target === 'opponent') {
+      return turnPlayerId !== currentPlayer
+    }
+  }
+
+  inLocation(target, location, findId) {
+    return this.lookup[target][location]().find(id => id === findId)
+  }
+  
   handleHandCardClick(e, id) {
-    if (this.props.game.state.currentPhase.name === 'Main Phase') {
-      if (this.lookup.self.hand().find(handId => handId === id))
+    if (this.isPhase('Main Phase')) {
+      if (this.inLocation('self', 'hand', id))
       this.uiActs.selectCard(id)
     }
   }
@@ -325,7 +454,6 @@ export default class Game extends Component {
         // The card is on your field
         && this.lookup.self.field().find(fieldId => fieldId === id)
       ) {
-        console.log('a')
         this.uiActs.selectCard(id)
       }
       else if (
@@ -334,7 +462,6 @@ export default class Game extends Component {
         // The card is targetable
         && this.props.game.state.promptQueue[0].steps[this.props.game.state.promptQueue[0].currentStep].targetables.find(target => target.id === id)
       ) {
-        console.log('b')
         this.uiActs.selectCard(id)
       }
     }
@@ -360,76 +487,6 @@ export default class Game extends Component {
 
   handleWorkerMouseOut(e, id) {
     this.uiActs.zoomCard(null)
-  }
-
-  get opponentWorkerNodes() {
-    return 'none'
-  }
-
-  get playerCreatureNodes() {
-    return this._createNodes('self')
-  }
-
-  get opponentCreatureNodes() {
-    return this.lookup.opponent.field()
-      .map(id => this.lookup.card(id))
-      .map((card, i) => {
-        return (
-          <Card
-            key={i}
-            shrink={this.lookup.opponent.field().length > 6}
-            type='field'
-            id={card.id}
-            zoomState={this.props.ui.zoomedCard === card.id}
-            selectState={this.props.ui.selectedCard === card.id}
-            onCardMouseOver={(e, id) => this.uiActs.zoomCard(id)}
-            onCardMouseOut={(e, id) => this.uiActs.zoomCard(null)}
-            onCardClick={(e, id) => this.uiActs.selectCard(id)}
-            {...card} />
-        )
-      })
-  }
-
-  _createNodes(target) {
-    return this.lookup[target].field()
-      .map(id => this.lookup.card(id))
-      .map((card, i) => {
-        return (
-          <Card
-            key={i}
-            shrink={this.lookup[target].field().length > 6}
-            type='field'
-            id={card.id}
-            zoomState={this.props.ui.zoomedCard === card.id}
-            selectState={this.props.ui.selectedCard === card.id}
-            onCardMouseOver={this.handleFieldCardMouseOver}
-            onCardMouseOut={this.handleFieldCardMouseOut}
-            onCardClick={this.handleFieldCardClick}
-            {...card} />
-        )
-      })
-  }
-
-  get playerNexusNode() {
-    const castle = this.lookup.self.player().castle
-    return (
-      <div
-        className='Nexus'
-        onClick={() => this.uiActs.selectCard(castle.id)}>
-        {castle.currentHealth}
-      </div>
-    )
-  }
-
-  get opponentNexusNode() {
-    const castle = this.lookup.opponent.player().castle
-    return (
-      <div
-        className='Nexus'
-        onClick={() => this.uiActs.selectCard(castle.id)}>
-        {castle.currentHealth}
-      </div>
-    )
   }
 
   UIPlayAction() {
@@ -473,6 +530,8 @@ export default class Game extends Component {
         cost: this.props.ui.cost
       }
     })
+    this.uiActs.selectCard(null)
+    this.uiActs.cancelDeclaration()
   }
 
   pullAction() {
@@ -535,56 +594,6 @@ export default class Game extends Component {
         playerId: this.props.game.currentPlayer
       }
     })
-  }
-
-  get actionViewNode() {
-    const cardId = this.props.ui.selectedCard
-    if (!cardId) {
-      return
-    }
-    
-    if (
-      this.props.game.state.currentPhase.name === 'Block Phase'
-      && this.props.game.state.players[this.props.game.state.turn].playerId !== this.props.game.currentPlayer
-      && this.inLocation('self', 'field', cardId)
-    ) {
-      return [
-        <button key={0} onClick={this.UIBlockAction}>Block</button>
-      ]
-    }
-
-    if (this.inLocation('self', 'field', cardId)) {
-      return [
-        <button key={0} onClick={this.UIAttackAction}>Attack</button>
-      ]
-    }
-
-    if (this.inLocation('self', 'hand', cardId)) {
-      return [
-        <button key={0} onClick={this.UIPlayAction}>Play</button>,
-        <button key={1} onClick={this.assignAction}>Assign</button>
-      ]
-    }
-
-    if (this.inLocation('self', 'town', cardId)) {
-      return [
-        <button key={0} onClick={this.pullAction}>Pull</button>
-      ]
-    }
-  }
-
-  inLocation(target, location, findId) {
-    return this.lookup[target][location]().find(id => id === findId)
-  }
-
-  get actionUIViewNode() {
-    if (this.props.ui.playingCard) {
-      return this.playingActionUIViewNode
-    }
-
-    if (this.props.game.state.promptQueue.length > 0) {
-      return this.promptUINode
-    }
   }
 
   get playingActionUIViewNode() {

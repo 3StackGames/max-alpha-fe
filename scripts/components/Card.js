@@ -17,12 +17,12 @@ export default class Card extends Component {
     return (
       <div
         className={cx('Card', props.className, {
-          'Card-opponent': props.opponent
+          'Card-opponent': props.opponent,
+          'Card-hand': props.type === 'hand'
         })}
         onClick={this.handleClick}
         onMouseOver={this.handleCardMouseOver}
-        onMouseOut={this.handleCardMouseOut}
-        style={this.handStyles}>
+        onMouseOut={this.handleCardMouseOut}>
         {
           props.combatPair
             ? this.combatPairNode

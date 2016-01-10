@@ -1,3 +1,9 @@
+setVisibleTextColor(background)
+  if light(background)
+    color: black
+  else
+    color: white
+
 .ResourceOrb
   display: inline-block
   width: 25px
@@ -9,11 +15,15 @@
   line-height: 25px
   text-align: center
   vertical-align: middle
-  color: black
+  
+  &--empty
+    opacity: 0.2
 
   &-colorless
     background-color: $mana-colorless
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+    
 
     // &.WorkerOrb
     //   &--zoom
@@ -24,6 +34,7 @@
   &-white
     background-color: $mana-white
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
     
     // &.WorkerOrb
     //   &--zoom
@@ -34,6 +45,7 @@
   &-blue
     background-color: $mana-blue
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
     
     // &.WorkerOrb
     //   &--zoom
@@ -44,18 +56,22 @@
   &-yellow
     background-color: $mana-yellow
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
   
   &-green
     background-color: $mana-green
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
   
   &-red
     background-color: $mana-red
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
   
   &-black
     background-color: $mana-black
     border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
 
 .WorkerOrb
   transition: transform 250ms ease

@@ -83,6 +83,7 @@ export default class Game extends Component {
             <div className='structures-container'>
               <div className='container-label'><span>STRUCTS</span></div>
               <div className='structures-body'>
+                {this.structureNodes('opponent')}
               </div>
             </div>
           </div>
@@ -142,8 +143,8 @@ export default class Game extends Component {
             {this.promptNode}
           </div>
           <div className='castles-container'>
-            <div className='castle-body'>{this.lookup.opponent.player().castle.currentHealth}</div>
-            <div className='castle-body'>{this.lookup.self.player().castle.currentHealth}</div>
+            {this.castleNode('opponent')}
+            {this.castleNode('self')}
           </div>
         </div>
         <div className='self-container'>
@@ -151,6 +152,7 @@ export default class Game extends Component {
             <div className='structures-container'>
               <div className='container-label'><span>STRUCTS</span></div>
               <div className='structures-body'>
+                {this.structureNodes('self')}
               </div>
             </div>
             <div className='grave-container'>
@@ -261,15 +263,12 @@ export default class Game extends Component {
       return
     }
 
-    // if (promptQueue.length > 0) {
-    //   const promptHead = promptQueue[0]
-    //   const step = promptHead.steps[promptHead.currentStep]
-
-    //   return [
-    //     <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + this.lookup.card(selectedCard).name : 'Select a target'}</div>,
-    //     <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
-    //   ]
-    // }
+    if (promptQueue.length > 0) {
+      return [
+        <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + this.lookup.card(selectedCard).name : 'Select a target'}</div>,
+        <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
+      ]
+    }
 
     if (playingCard) {
       const colorResources = this.lookup.self.player().resources.colors
@@ -300,9 +299,17 @@ export default class Game extends Component {
     }
 
     if (this.inLocation('self', 'creatures', selectedCard)) {
-      return [
-        <div key={0} className='prompt-item'><button onClick={this.UIAttackAction}>Attack</button></div>
-      ]
+      if (this.isPhase('Attack Phase') && this.isTurn('self')) {
+        return [
+          <div key={0} className='prompt-item'><button onClick={this.UIAttackAction}>Attack</button></div>
+        ]
+      }
+
+      if (this.isPhase('Block Phase') && this.isTurn('opponent')) {
+        return [
+          <div key={0} className='prompt-item'><button onClick={this.UIBlockAction}>Block</button></div>
+        ]
+      }
     }
 
     if (this.inLocation('self', 'town', selectedCard)) {
@@ -310,6 +317,19 @@ export default class Game extends Component {
         <div key={0} className='prompt-item'><button onClick={this.pullAction}>Pull</button></div>
       ]
     }
+  }
+
+  castleNode(target) {
+    const { castle } = this.lookup[target].player()
+    return (
+      <div
+        className={cx('castle-body', {
+          'castle-body--selected': this.props.ui.selectedCard === castle.id
+        })}
+        onClick={e => this.handleCastleClick(e, castle.id)}>
+        {castle.currentHealth}
+      </div>
+    )
   }
 
   handNodes(target) {
@@ -346,7 +366,7 @@ export default class Game extends Component {
     const town = this.lookup[target].town()
     return town.length === 0
       ? 'No workers'
-      : this.lookup.self.town()
+      : town
       .map((id, i) => {
         const color = this.lookup.card(id).dominantColor.toUpperCase()
         return (
@@ -380,11 +400,23 @@ export default class Game extends Component {
     ))
   }
 
+  structureNodes(target) {
+    return this.lookup[target].structures().map(id => (
+      <div
+        className={cx('struct-deck-item', {
+          'struct-deck-item--selected': this.props.ui.selectedCard === id
+        })}
+        onClick={e => this.handleStructureDeckClick(e, id)}>
+       {id.substr(0, 4)}
+      </div>
+    ))
+  }
+
   get endPhaseNode() {
     if (this.isTurn('self')) {
       if (this.isPhase('Main Phase')) {
         if (this.props.game.state.combatEnded) {
-          <button onClick={this.finishPhaseAction}>END TURN</button>
+          return <button onClick={this.finishPhaseAction}>END TURN</button>
         }
         return (
           <button onClick={this.finishPhaseAction}>Finish Main</button>
@@ -392,9 +424,10 @@ export default class Game extends Component {
       }
 
       if (this.isPhase('Attack Phase')) {
-        return (
-          <button onClick={this.finishPhaseAction}>Launch Attack</button>
-        )
+        return [
+          <button key={0} onClick={this.finishPhaseAction}>Launch Attack</button>,
+          <button key={1} onClick={this.endTurnWithoutCombatAction}>Skip Combat</button>
+        ]
       }
     }
 
@@ -427,6 +460,32 @@ export default class Game extends Component {
 
   inLocation(target, location, findId) {
     return this.lookup[target][location]().find(id => id === findId)
+  }
+
+  get currentPromptStep() {
+    if (this.props.game.state.promptQueue.length === 0) {
+      return null
+    }
+
+    const promptHead = this.props.game.state.promptQueue[0]
+    return promptHead.steps[promptHead.currentStep]
+  }
+
+  handleCastleClick(e, id) {
+    if (this.currentPromptStep) {
+      if (this.currentPromptStep.targetables.find(target => target.id === id)) {
+        console.log('3')
+        this.uiActs.selectCard(id)
+      }
+    }
+  }
+
+  handleStructureDeckClick(e, id) {
+    if (this.isPhase('Main Phase')) {
+      if (this.inLocation('self', 'structures', id)) {
+        this.uiActs.selectCard(id)
+      }
+    }
   }
   
   handleHandCardClick(e, id) {
@@ -528,6 +587,7 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
+    this.uiActs.selectCard(null)
   }
 
   playAction() {
@@ -560,6 +620,7 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
+    this.uiActs.selectCard(null)
   }
 
   declareAttackAction() {
@@ -598,6 +659,7 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
+    this.uiActs.selectCard(null)
   }
 
   finishPhaseAction() {
@@ -606,6 +668,18 @@ export default class Game extends Component {
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Finish Phase',
+        playerId: this.props.game.currentPlayer
+      }
+    })
+    this.uiActs.selectCard(null)
+  }
+
+  endTurnWithoutCombatAction() {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'End Turn Without Combat',
         playerId: this.props.game.currentPlayer
       }
     })

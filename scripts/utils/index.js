@@ -31,12 +31,10 @@ const lookupCard = (game, id) => {
 }
 
 const self = (game) =>
-  game.state.players
-    .find(player => player.playerId === game.currentPlayer)
+  game.state.players[game.currentPlayer.playerIndex]
 
 const opponent = (game) =>
-  game.state.players
-    .find(player => player.playerId !== game.currentPlayer)
+  game.state.players[game.currentPlayer.playerIndex === 0 ? 1 : 0]
 
 const lookupHand = (target) =>
   target.hand.cardIds

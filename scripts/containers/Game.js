@@ -816,7 +816,7 @@ export default class Game extends Component {
     if (selectedCard) {
       return (
         <div>
-          <p>Targetting: {this.lookup.card(selectedCard).name}</p>
+          <p>Targeting: {this.lookup.card(selectedCard).name}</p>
           <button onClick={this.declareAttackAction}>Attack</button>
         </div>
       )
@@ -833,7 +833,7 @@ export default class Game extends Component {
     if (selectedCard) {
       return (
         <div>
-          <p>Targetting: {this.lookup.card(selectedCard).name}</p>
+          <p>Targeting: {this.lookup.card(selectedCard).name}</p>
           <button onClick={this.singleTargetPromptAction}>Target</button>
         </div>
       )

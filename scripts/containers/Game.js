@@ -335,7 +335,13 @@ export default class Game extends Component {
     return this.lookup[target].courtyard()
       .map(this.mapIdToCard)
       .map(structure => (
-        <div className='courtyard-card'>
+        <div
+          className={cx('courtyard-card', {
+            'courtyard-card--selected': this.props.ui.selectedCard === structure.id
+          })}
+          onClick={e => this.handleStructureClick(e, structure.id)}
+          onMouseOver={e => this.handleStructureMouseOver(e, structure.id)}
+          onMouseOut={e => this.handleStructureMouseOut(e, structure.id)}>
           <div>Name: {structure.name}</div>
           <div>HP: {structure.currentHealth}</div>
         </div>
@@ -444,7 +450,7 @@ export default class Game extends Component {
           return <button onClick={this.finishPhaseAction}>END TURN</button>
         }
         return [
-          <button key={0} onClick={this.finishPhaseAction}>Plan Attack</button>,
+          <button key={0} onClick={this.finishPhaseAction}>Move to Combat</button>,
           <button key={1} onClick={this.endTurnWithoutCombatAction}>END TURN</button>
         ]
       }
@@ -504,15 +510,46 @@ export default class Game extends Component {
   handleCastleClick(e, id) {
     if (this.currentPromptStep) {
       if (this.currentPromptStep.targetables.find(target => target.id === id)) {
-        console.log('3')
         this.uiActs.selectCard(id)
       }
+    }
+  }
+
+  handleStructureClick(e, id) {
+    // if (this.isPhase('Main Phase')) {
+    //   if (this.inLocation('self', 'courtyard', id)) {
+    //     this.uiActs.selectCard(id)
+    //   }
+    // }
+
+    if (this.currentPromptStep) {
+      if (this.currentPromptStep.targetables.find(target => target.id === id)) {
+        this.uiActs.selectCard(id)
+      }
+    }
+  }
+
+  handleStructureMouseOver(e, id) {
+    if (this.inLocation('self', 'courtyard', id)) {
+      this.uiActs.zoomCard(id)
+    }
+  }
+
+  handleStructureMouseOut(e, id) {
+    if (this.inLocation('self', 'courtyard', id)) {
+      this.uiActs.zoomCard(null)
     }
   }
 
   handleStructureDeckClick(e, id) {
     if (this.isPhase('Main Phase')) {
       if (this.inLocation('self', 'structures', id)) {
+        this.uiActs.selectCard(id)
+      }
+    }
+
+    if (this.currentPromptStep) {
+      if (this.currentPromptStep.targetables.find(target => target.id === id)) {
         this.uiActs.selectCard(id)
       }
     }

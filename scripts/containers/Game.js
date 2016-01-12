@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import ReactDOM, { render } from 'react-dom'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
@@ -40,25 +41,25 @@ export default class Game extends Component {
       this.lookup = bindStateLookups(this, nextProps.game)
     }
 
-    if (this.props.ui.playingCard && this.props.ui.selectedCard !== this.props.ui.playingCard) {
+    if (nextProps.ui.playingCard && nextProps.ui.selectedCard !== nextProps.ui.playingCard) {
       this.uiActs.cancelDeclaration()
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.ui.attackingCard
-      && prevProps.ui.attackingCard !== this.props.ui.attackingCard
-    ) {
-      this.declareAttackAction()
-    }
+    // if (
+    //   this.props.ui.attackingCard
+    //   && prevProps.ui.attackingCard !== this.props.ui.attackingCard
+    // ) {
+    //   this.declareAttackAction()
+    // }
 
-    if (
-      this.props.ui.blockingCard
-      && prevProps.ui.blockingCard !== this.props.ui.blockingCard
-    ) {
-      this.declareBlockCard()
-    }
+    // if (
+    //   this.props.ui.blockingCard
+    //   && prevProps.ui.blockingCard !== this.props.ui.blockingCard
+    // ) {
+    //   this.declareBlockCard()
+    // }
   }
 
   render() {
@@ -103,7 +104,6 @@ export default class Game extends Component {
               <div className='town-body'>
                 {this.townNodes('opponent')}
               </div>
-              <div className='container-label'><span></span></div>
             </div>
             <div className='resource-indicator-container'>
               <div className='resource-indicator-body'>
@@ -200,10 +200,14 @@ export default class Game extends Component {
               </div>
             </div>
             <div className='town-container'>
-              <div className='container-label'><span></span></div>
-              <div className='town-body'>
+              <ReactCSSTransitionGroup
+                component='div'
+                className='town-body'
+                transitionName='town-resource'
+                transitionEnterTimeout={250}
+                transitionLeaveTimeout={250}>
                 {this.townNodes('self')}
-              </div>
+              </ReactCSSTransitionGroup>
             </div>
           </div>
         </div>
@@ -297,38 +301,66 @@ export default class Game extends Component {
       ]
     }
 
+    return this.primaryPromptNode
+  }
+
+  get primaryPromptNode() {
+    const { selectedCard } = this.props.ui
+
     if (this.inLocation('self', 'hand', selectedCard)) {
-      return [
-        <div key={0} className='prompt-item'><button onClick={this.UIPlayAction}>Play</button></div>,
-        <div key={1} className='prompt-item'><button onClick={this.assignAction}>Assign</button></div>
-      ]
+      if (!this.hasAssignedOrPulled('self')) {
+        return this.buildPromptButtons(this.playButton, this.assignButton)
+      }
+
+      return this.buildPromptButtons(this.playButton)
     }
 
     if (this.inLocation('self', 'structures', selectedCard)) {
-      return [
-        <div key={0} className='prompt-item'><button onClick={this.UIPlayAction}>Play</button></div>
-      ]
+      return this.buildPromptButtons(this.playButton)
     }
 
     if (this.inLocation('self', 'creatures', selectedCard)) {
       if (this.isPhase('Attack Phase') && this.isTurn('self')) {
-        return [
-          <div key={0} className='prompt-item'><button onClick={this.UIAttackAction}>Attack</button></div>
-        ]
+        return this.buildPromptButtons(this.attackButton)
       }
 
       if (this.isPhase('Block Phase') && this.isTurn('opponent')) {
-        return [
-          <div key={0} className='prompt-item'><button onClick={this.UIBlockAction}>Block</button></div>
-        ]
+        return this.buildPromptButtons(this.blockButton)
       }
     }
 
-    if (this.inLocation('self', 'town', selectedCard)) {
-      return [
-        <div key={0} className='prompt-item'><button onClick={this.pullAction}>Pull</button></div>
-      ]
+    if (
+      this.inLocation('self', 'town', selectedCard) 
+      && !this.hasAssignedOrPulled('self')
+    ) {
+      return this.buildPromptButtons(this.pullButton)
     }
+  }
+
+  buildPromptButtons(...buttons) {
+    return buttons.map((button, i) => (
+      <div key={i} className='prompt-item'>{button}</div>
+    ))
+  }
+
+  get playButton() {
+    return <button onClick={this.UIPlayAction}>Play</button>
+  }
+
+  get assignButton() {
+    return <button onClick={this.assignAction}>Assign</button>
+  }
+
+  get attackButton() {
+    return <button onClick={this.UIAttackAction}>Attack</button>
+  }
+
+  get blockButton() {
+    return <button onClick={this.UIBlockAction}>Block</button>
+  }
+
+  get pullButton() {
+    return <button onClick={this.pullAction}>Pull</button>
   }
 
   courtyardNodes(target) {
@@ -392,10 +424,7 @@ export default class Game extends Component {
   }
 
   townNodes(target) {
-    const town = this.lookup[target].town()
-    return town.length === 0
-      ? 'No workers'
-      : town
+    return this.lookup[target].town()
       .map((id, i) => {
         const color = this.lookup.card(id).dominantColor.toUpperCase()
         return (
@@ -423,7 +452,7 @@ export default class Game extends Component {
   deckNodes(target) {
     return this.lookup[target].deck().map((id, i) => (
       <FaceDownCard
-        style={{ transform: `translateX(${ i * -0.25 }px)` }}
+        style={{ transform: `translateX(${ i * -0.5 }px)` }}
         key={i}
         type='deck' />
     ))
@@ -492,6 +521,10 @@ export default class Game extends Component {
 
   inLocation(target, location, findId) {
     return this.lookup[target][location]().find(id => id === findId)
+  }
+
+  hasAssignedOrPulled(target) {
+    return this.lookup[target].player().hasAssignedOrPulled
   }
 
   get currentPromptStep() {
@@ -568,9 +601,12 @@ export default class Game extends Component {
   }
   
   handleHandCardClick(e, id) {
-    if (this.isPhase('Main Phase')) {
-      if (this.inLocation('self', 'hand', id))
-      this.uiActs.selectCard(id)
+    if (
+      this.isPhase('Main Phase')
+      && this.isTurn('self')
+      && this.inLocation('self', 'hand', id)
+    ) {
+        this.uiActs.selectCard(id)
     }
   }
 
@@ -587,7 +623,10 @@ export default class Game extends Component {
   }
 
   handleFieldCardClick(e, id) {
-    if (this.props.game.state.currentPhase.name === 'Attack Phase') {
+    if (
+      this.isPhase('Attack Phase')
+      && this.isTurn('self')
+    ) {
       this.uiActs.selectCard(id)
     }
 
@@ -647,12 +686,12 @@ export default class Game extends Component {
   }
 
   UIAttackAction() {
-    this.uiActs.declareAttackCard(this.props.ui.selectedCard)
+    this.declareAttackAction()
     this.uiActs.selectCard(null)
   }
 
   UIBlockAction() {
-    this.uiActs.declareBlockCard(this.props.ui.selectedCard)
+    this.declareBlockAction()
     this.uiActs.selectCard(null)
   }
 
@@ -691,7 +730,6 @@ export default class Game extends Component {
         cost: this.props.ui.cost
       }
     })
-
     this.uiActs.selectCard(null)
     this.uiActs.cancelDeclaration()
   }
@@ -716,10 +754,10 @@ export default class Game extends Component {
       action: {
         type: 'Declare Attacker',
         playerId: this.currentPlayerId,
-        cardId: this.props.ui.attackingCard
+        cardId: this.props.ui.selectedCard
       }
     })
-    this.uiActs.declareAttackCard(null)
+    // this.uiActs.declareAttackCard(null)
   }
 
   declareBlockCard() {
@@ -729,10 +767,10 @@ export default class Game extends Component {
       action: {
         type: 'Declare Blocker',
         playerId: this.currentPlayerId,
-        cardId: this.props.ui.blockingCard
+        cardId: this.props.ui.selectedCard
       }
     })
-    this.uiActs.declareBlockCard(null)
+    // this.uiActs.declareBlockCard(null)
   }
 
   singleTargetPromptAction() {
@@ -769,6 +807,7 @@ export default class Game extends Component {
         playerId: this.currentPlayerId
       }
     })
+    this.uiActs.selectCard(null)
   }
 
   get playingActionUIViewNode() {

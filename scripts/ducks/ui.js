@@ -4,8 +4,6 @@ const SELECT_CARD = 'max-alpha/ui/SELECT_CARD'
 const ZOOM_CARD = 'max-alpha/ui/ZOOM_CARD'
 const DECLARE_PLAY_CARD = 'max-alpha/ui/DECLARE_PLAY_CARD'
 const ASSIGN_COST = 'max-alpha/ui/ASSIGN_COST'
-const DECLARE_ATTACK_CARD = 'max-alpha/ui/DECLARE_ATTACK_CARD'
-const DECLARE_BLOCK_CARD = 'max-alpha/ui/DECLARE_BLOCK_CARD'
 const ASSIGN_TARGET = 'max-alpha/ui/ASSIGN_TARGET'
 const CANCEL_DECLARATION = 'max-alpha/ui/CANCEL_DECLARATION'
 
@@ -23,8 +21,6 @@ const initialState = {
   selectedCard: null,
   zoomedCard: null,
   playingCard: null,
-  attackingCard: null,
-  blockingCard: null,
   targetCard: null,
   cost: {
     colors: initialColors
@@ -57,30 +53,6 @@ const reducer = (state = initialState, action) => {
         ...state,
         playingCard: payload
       }
-    case DECLARE_ATTACK_CARD:
-      if (!payload) {
-        return {
-          ...state,
-          attackingCard: null,
-          targetCard: null
-        }
-      }
-      return {
-        ...state,
-        attackingCard: payload
-      }
-    case DECLARE_BLOCK_CARD:
-      if (!payload) {
-        return {
-          ...state,
-          blockingCard: null,
-          targetCard: null
-        }
-      }
-      return {
-        ...state,
-        blockingCard: payload
-      }
     case ASSIGN_COST:
       return {
         ...state,
@@ -101,7 +73,6 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         playingCard: null,
-        attackingCard: null,
         cost: {
           colors: initialColors
         }
@@ -139,20 +110,6 @@ export const assignCost = (color, value) => {
       value,
       color: color
     }
-  }
-}
-
-export const declareAttackCard = id => {
-  return {
-    type: DECLARE_ATTACK_CARD,
-    payload: id
-  }
-}
-
-export const declareBlockCard = id => {
-  return {
-    type: DECLARE_BLOCK_CARD,
-    payload: id
   }
 }
 

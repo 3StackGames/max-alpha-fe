@@ -3,6 +3,7 @@ import ReactDOM, { render } from 'react-dom'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
 import Card from './Card'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 @autobind
 export default class App extends Component {
@@ -22,17 +23,22 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className='Hand'>
+      <ReactCSSTransitionGroup
+        component='div'
+        className='Hand'
+        transitionName='card-hand'
+        transitionEnterTimeout={250}
+        transitionLeaveTimeout={250}>
         {this.cardNodes}
-      </div>
+      </ReactCSSTransitionGroup>
     )
   }
 
   get cardNodes() {
-    return this.props.cards.map((card, i) => {
+    return this.props.cards.map(card => {
       return (
         <Card
-          key={i}
+          key={card.id}
           type='hand'
           opponent={this.props.opponent}
           handLength={this.props.cards.length}

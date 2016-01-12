@@ -1,0 +1,17 @@
+.WorkerOrb.town-resource-enter
+  opacity: 0.01
+  transform: translateY(-100px) scale(3)
+  
+.WorkerOrb.town-resource-enter.town-resource-enter-active
+  opacity: 1
+  transform: translateY(0px) scale(1)
+  transition: all 250ms ease
+
+.WorkerOrb.town-resource-leave
+  opacity: 1
+  transform: scale(1)
+  
+.WorkerOrb.town-resource-leave.town-resource-leave-active
+  opacity: 0.01
+  transform: scale(0)
+  transition: all 250ms ease

@@ -8,6 +8,10 @@ import { bindActionCreators } from 'redux'
 import * as gameActs from '../ducks/game'
 import { bindStateDecorator } from '../utils'
 
+const player1Id = '5692c8785874ab801b000001'
+const player2Id = '5696e9f35874ab801b000004'
+const deckId = '568ec4b9bbdcf16c2c000003'
+
 @connect(state => ({
   game: state.game
 }))
@@ -52,9 +56,8 @@ export default class MatchMaker extends Component {
 
     return (
       <div>
-        <input onChange={this.handlePlayerId} />
-        <input onChange={this.handleDeckId} />
-        <button onClick={this.handleFindGame}>Find Game</button>
+        <button onClick={() => this.findGame(player1Id)}>Find game as PLAYER 1</button>
+        <button onClick={() => this.findGame(player2Id)}>Find game as PLAYER 2</button>
         <button onClick={this.handleReadyGame}>I'm Ready</button>
         {
           this.state.playerReadySent
@@ -74,7 +77,7 @@ export default class MatchMaker extends Component {
     engine.send({
       eventType: 'Player Ready',
       playerId: this.state.playerId,
-      gameCode: this.gameCode,
+      gameCode: this.props.game.gameCode,
       ready: true
     })
   }
@@ -96,7 +99,6 @@ export default class MatchMaker extends Component {
   }
 
   handleGameFound(data) {
-    this.gameCode = data.gameCode
     this.gameActs.setGameCode(data.gameCode)
   }
 
@@ -112,14 +114,24 @@ export default class MatchMaker extends Component {
     })
   }
 
-  handleFindGame(e) {
-    // e.target.disabled = true
+  findGame(id) {
     engine.send({
+      deckId,
       eventType: engine.types.FIND_GAME,
-      playerId: this.state.playerId,
-      deckId: this.state.deckId
+      playerId: id
+    })
+    this.setState({
+      playerId: id
     })
   }
+  // handleFindGame(e) {
+  //   // e.target.disabled = true
+  //   engine.send({
+  //     eventType: engine.types.FIND_GAME,
+  //     playerId: this.state.playerId,
+  //     deckId: this.state.deckId
+  //   })
+  // }
 
   bindState() {
     this.gameActs.stateUpdate(engine.getState())

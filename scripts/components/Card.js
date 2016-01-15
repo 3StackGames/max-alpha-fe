@@ -4,7 +4,20 @@ import autobind from 'autobind-decorator'
 import R from 'ramda'
 import ResourceOrb from './ResourceOrb'
 
-@autobind
+import { DragSource, DropTarget } from 'react-dnd'
+const CARD_HAND = 'CARD_HAND'
+
+const cardSource = {
+  beginDrag(props, monitor, component) {
+    const item = { id: props.id }
+    return item
+  }
+}
+
+@DragSource(CARD_HAND, cardSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
+}))
 export default class Card extends Component {
   constructor(props) {
     super(props)
@@ -13,8 +26,9 @@ export default class Card extends Component {
     }
   }
   render() {
+
     const { state, props } = this
-    return (
+    return props.connectDragSource(
       <div
         className={cx('Card', props.className, {
           'Card-opponent': props.opponent,
@@ -80,13 +94,16 @@ export default class Card extends Component {
     }
   }
 
+  @autobind
   handleClick(e) {
     if (this.props.onCardClick) {
       this.props.onCardClick(e, this.props.id)
     }
   }
 
+  @autobind
   handleCardMouseOver(e) {
+    console.log(this)
     if (this.props.onCardMouseOver) {
       this.props.onCardMouseOver(e, this.props.id)
     }
@@ -96,6 +113,7 @@ export default class Card extends Component {
     })
   }
 
+  @autobind
   handleCardMouseOut(e) {
     if (this.props.onCardMouseOut) {
       this.props.onCardMouseOut(e, this.props.id)

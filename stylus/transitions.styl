@@ -1,0 +1,48 @@
+.Card.card-hand-enter
+  opacity: 0.01
+  transform: translateY(-100px)
+
+.Card.card-hand-enter.card-hand-enter-active
+  opacity: 1
+  transform: translateY(0px)
+  transition: all 250ms ease
+
+.Card.card-hand-leave
+  opacity: 1
+  transform: translateY(0px)
+
+.Card.card-hand-leave.card-hand-leave-active
+  opacity: 0.01
+  transform: translateY(-100px) scale(3)
+  transition: all 250ms ease
+  
+
+.WorkerOrb.town-resource-enter
+  opacity: 0.01
+  transform: translateY(-100px) scale(3)
+  
+.WorkerOrb.town-resource-enter.town-resource-enter-active
+  opacity: 1
+  transform: translateY(0px) scale(1)
+  transition: all 250ms ease
+
+.WorkerOrb.town-resource-leave
+  opacity: 1
+  transform: scale(1)
+  
+.WorkerOrb.town-resource-leave.town-resource-leave-active
+  opacity: 0.01
+  transform: scale(0)
+  transition: all 250ms ease
+  
+
+.Card.creature-enter
+  opacity: 0.01
+  box-shadow: 0px 10px 60px 1px rgba(0,0,0,1)
+  transform: translateY(-100px) scale(3)
+
+.Card.creature-enter.creature-enter-active
+  opacity: 1
+  transform: translateY(0px) scale(1)
+  box-shadow: none
+  transition: all 250ms ease

@@ -18,9 +18,27 @@ import {
 } from '../components'
 import titleCase from 'title-case'
 
+import { DragSource, DropTarget } from 'react-dnd'
+const CARD_HAND = 'CARD_HAND'
+const WORKER = 'WORKER'
+
+const townTarget = {
+  canDrop(props, monitor) {
+    return true
+  },
+
+  drop(props, monitor, component) {
+    component.uiActs.selectCard(monitor.getItem().id)
+    component.assignAction()
+  }
+}
+
 @connect(state => ({
   game: state.game,
   ui: state.ui
+}))
+@DropTarget(CARD_HAND, townTarget, (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget()
 }))
 @autobind
 @bindStateDecorator(engine)
@@ -95,29 +113,39 @@ export default class Game extends Component {
             <div className='hand-container'>
               {this.handNodes('opponent')}
             </div>
-            <div className='field-container'>
+            <ReactCSSTransitionGroup
+              component='div'
+              className='field-container'
+              transitionName='creature'
+              transitionEnterTimeout={250}
+              transitionLeaveTimeout={250}>
               {this.creatureNodes('opponent')}
-            </div>
+            </ReactCSSTransitionGroup>
           </div>
           <div className='resources-container'>
             <div className='town-container'>
-              <div className='town-body'>
+              <ReactCSSTransitionGroup
+                component='div'
+                className='town-body'
+                transitionName='town-resource'
+                transitionEnterTimeout={250}
+                transitionLeaveTimeout={250}>
                 {this.townNodes('opponent')}
-              </div>
+              </ReactCSSTransitionGroup>
             </div>
             <div className='resource-indicator-container'>
               <div className='resource-indicator-body'>
                 <div className='resource-row'>
-                  {this.resourceNode('opponent', 'BLUE')}
                   {this.resourceNode('opponent', 'WHITE')}
+                  {this.resourceNode('opponent', 'BLUE')}
                 </div>
                 <div className='resource-row'>
-                  {this.resourceNode('opponent', 'RED')}
+                  {this.resourceNode('opponent', 'YELLOW')}
                   {this.resourceNode('opponent', 'COLORLESS')}
                   {this.resourceNode('opponent', 'GREEN')}
                 </div>
                 <div className='resource-row'>
-                  {this.resourceNode('opponent', 'YELLOW')}
+                  {this.resourceNode('opponent', 'RED')}
                   {this.resourceNode('opponent', 'BLACK')}
                 </div>
               </div>
@@ -174,9 +202,14 @@ export default class Game extends Component {
             {this.courtyardNodes('self')}
           </div>
           <div className='playing-container'>
-            <div className='field-container'>
+            <ReactCSSTransitionGroup
+              component='div'
+              className='field-container'
+              transitionName='creature'
+              transitionEnterTimeout={250}
+              transitionLeaveTimeout={250}>
               {this.creatureNodes('self')}
-            </div>
+            </ReactCSSTransitionGroup>
             <div className='hand-container'>
               {this.handNodes('self')}
             </div>
@@ -185,30 +218,32 @@ export default class Game extends Component {
             <div className='resource-indicator-container'>
               <div className='resource-indicator-body'>
                 <div className='resource-row'>
-                  {this.resourceNode('self', 'BLUE')}
                   {this.resourceNode('self', 'WHITE')}
+                  {this.resourceNode('self', 'BLUE')}
                 </div>
                 <div className='resource-row'>
-                  {this.resourceNode('self', 'RED')}
+                  {this.resourceNode('self', 'YELLOW')}
                   {this.resourceNode('self', 'COLORLESS')}
                   {this.resourceNode('self', 'GREEN')}
                 </div>
                 <div className='resource-row'>
-                  {this.resourceNode('self', 'YELLOW')}
+                  {this.resourceNode('self', 'RED')}
                   {this.resourceNode('self', 'BLACK')}
                 </div>
               </div>
             </div>
-            <div className='town-container'>
-              <ReactCSSTransitionGroup
-                component='div'
-                className='town-body'
-                transitionName='town-resource'
-                transitionEnterTimeout={250}
-                transitionLeaveTimeout={250}>
-                {this.townNodes('self')}
-              </ReactCSSTransitionGroup>
-            </div>
+            {this.props.connectDropTarget(
+              <div className='town-container'>
+                <ReactCSSTransitionGroup
+                  component='div'
+                  className='town-body'
+                  transitionName='town-resource'
+                  transitionEnterTimeout={250}
+                  transitionLeaveTimeout={250}>
+                  {this.townNodes('self')}
+                </ReactCSSTransitionGroup>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -300,12 +335,6 @@ export default class Game extends Component {
         </div>
       ]
     }
-
-    return this.primaryPromptNode
-  }
-
-  get primaryPromptNode() {
-    const { selectedCard } = this.props.ui
 
     if (this.inLocation('self', 'hand', selectedCard)) {
       if (!this.hasAssignedOrPulled('self')) {

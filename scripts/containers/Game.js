@@ -795,7 +795,7 @@ export default class Game extends Component {
     // this.uiActs.declareAttackCard(null)
   }
 
-  declareBlockCard() {
+  declareBlockAction() {
     engine.send({
       eventType: engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,

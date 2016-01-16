@@ -13,6 +13,7 @@ const target = {
   drop(props, monitor, component) {
     props.uiActs.selectCard(monitor.getItem().id)
     props.assignAction()
+    props.uiActs.zoomCard(null)
   }
 }
 
@@ -29,7 +30,7 @@ export default class Town extends Component {
     game: PropTypes.object.isRequired,
     assignAction: PropTypes.func.isRequired,
     player: PropTypes.oneOf(['self', 'opponent']).isRequired
-  }
+  };
 
   render() {
     return this.props.connectDropTarget(

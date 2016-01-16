@@ -1,38 +1,58 @@
-import React from 'react'
+import React, { Component, PropTypes, defaultProps } from 'react'
 import cx from 'classname'
+import autobind from 'autobind-decorator'
 
-const WorkerOrb = ({
-  id,
-  color,
-  onOrbClick,
-  onOrbOver,
-  onOrbOut,
-  zoomState,
-  selectState }) => {
-  const handleClick = e => {
-    if (onOrbClick) onOrbClick(e, id)
-  }
+import { DragSource } from 'react-dnd'
+const WORKER = 'WORKER'
 
-  const handleMouseOver = e => {
-    if (onOrbOver) onOrbOver(e, id)
+const workerSource = {
+  beginDrag(props, monitor, component) {
+    const item = { id: props.id }
+    return item
   }
-
-  const handleMouseOut = e => {
-    if (onOrbOut) onOrbOut(e, id)
-  }
-  return (
-    <span
-      className={cx(
-        'WorkerOrb',
-        'ResourceOrb',
-        `ResourceOrb-${color.toLowerCase()}`, {
-        'WorkerOrb--zoom': zoomState,
-        'WorkerOrb--select': selectState
-      })}
-      onClick={handleClick}
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut} />
-  )
 }
 
-export default WorkerOrb
+const workerConnect = (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
+})
+
+@DragSource(WORKER, workerSource, workerConnect)
+export default class WorkerOrb extends Component {
+  render() {
+    return this.props.connectDragSource(
+      <span
+        className={cx(
+          'WorkerOrb',
+          'ResourceOrb',
+          `ResourceOrb-${this.props.color}`, {
+          'WorkerOrb--zoom': this.props.zoomState,
+          'WorkerOrb--select': this.props.selectState
+        })}
+        onClick={this.handleClick}
+        onMouseOver={this.handleMouseOver}
+        onMouseOut={this.handleMouseOut} />
+    )
+  }
+
+  @autobind
+  handleClick(e) {
+    if (this.props.onOrbClick) {
+      this.props.onOrbClick(e, this.props.id)
+    }
+  }
+  
+  @autobind
+  handleMouseOver(e) {
+    if (this.props.onOrbOver) {
+      this.props.onOrbOver(e, this.props.id)
+    }
+  }
+  
+  @autobind
+  handleMouseOut(e) {
+    if (this.props.onOrbOut) {
+      this.props.onOrbOut(e, this.props.id)
+    }
+  }
+}

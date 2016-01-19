@@ -19,19 +19,27 @@ const dragCollect = (connect, monitor) => ({
   isDragging: monitor.isDragging()
 })
 
+const target = {
+  canDrop(props, monitor, component) {
+    return true
+  },
 
+  drop(props, monitor, component) {
+    props.smoothBlockAction(monitor.getItem().id, props.id)
+  }
+}
+
+const dropCollect = (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget()
+})
+
+@DropTarget(CARD, target, dropCollect)
 @DragSource(CARD, source, dragCollect)
 export default class Card extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      displayActions: false
-    }
-  }
   render() {
 
     const { state, props } = this
-    return props.connectDragSource(
+    return props.connectDropTarget(props.connectDragSource(
       <div
         className={cx('Card', props.className, {
           'Card-opponent': props.opponent,
@@ -61,7 +69,7 @@ export default class Card extends Component {
           }
         </div>
       </div>
-    )
+    ))
   }
 
   get backFaceBody() {
@@ -109,10 +117,6 @@ export default class Card extends Component {
     if (this.props.onCardMouseOver) {
       this.props.onCardMouseOver(e, this.props.id)
     }
-
-    this.setState({
-      displayActions: true
-    })
   }
 
   @autobind
@@ -120,22 +124,19 @@ export default class Card extends Component {
     if (this.props.onCardMouseOut) {
       this.props.onCardMouseOut(e, this.props.id)
     }
-    this.setState({
-      displayActions: false
-    })
   }
 
-  get actions() {
-    return (
-      <div className={cx('Card-actions-wrap', {
-        active: this.state.displayActions
-      })}>
-        <div className='Card-action'>
-          Use Effect
-        </div>
-      </div>
-    )
-  }
+  // get actions() {
+  //   return (
+  //     <div className={cx('Card-actions-wrap', {
+  //       active: this.state.displayActions
+  //     })}>
+  //       <div className='Card-action'>
+  //         Use Effect
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   get description() {
     const { props, tags, text } = this.props.description

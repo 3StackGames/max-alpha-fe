@@ -129,6 +129,7 @@ export default class Game extends Component {
               uiActs={this.uiActs}
               game={this.props.game}
               smoothAttackAction={this.smoothAttackAction}
+              smoothBlockAction={this.smoothBlockAction}
               player='opponent' />
           </div>
           <div className='resources-container'>
@@ -827,6 +828,19 @@ export default class Game extends Component {
         type: 'Declare Attacker',
         playerId: this.currentPlayerId,
         cardId: attackerId,
+        targetId: targetId
+      }
+    })
+  }
+
+  smoothBlockAction(blockerId, targetId) {
+    engine.send({
+      eventType: engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Declare Blocker',
+        playerId: this.currentPlayerId,
+        cardId: blockerId,
         targetId: targetId
       }
     })

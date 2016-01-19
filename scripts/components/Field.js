@@ -44,6 +44,7 @@ export default class Field extends Component {
           onCardClick={this.handleCardClick}
           onCardMouseOver={this.handleCardMouseOver}
           onCardMouseOut={this.handleCardMouseOut}
+          smoothBlockAction={this.props.smoothBlockAction}
           {...card} />
       ))
   }

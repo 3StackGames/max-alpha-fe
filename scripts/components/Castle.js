@@ -12,7 +12,7 @@ const target = {
 
   drop(props, monitor, component) {
     const { castle } = props.lookup[props.player].player()
-    props.smoothAttackAction(castle.id, monitor.getItem().id)
+    props.smoothAttackAction(monitor.getItem().id, castle.id)
     props.uiActs.zoomCard(null)
   }
 }

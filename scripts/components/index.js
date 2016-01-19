@@ -5,6 +5,8 @@ import ResourceOrb from './ResourceOrb'
 import WorkerOrb from './WorkerOrb'
 import FaceDownCard from './FaceDownCard'
 import Town from './Town'
+import Field from './Field'
+import Castle from './Castle'
 
 export {
   Card,
@@ -13,5 +15,7 @@ export {
   ResourceOrb,
   WorkerOrb,
   FaceDownCard,
-  Town
+  Town,
+  Field,
+  Castle
 }

@@ -4,20 +4,23 @@ import autobind from 'autobind-decorator'
 import R from 'ramda'
 import ResourceOrb from './ResourceOrb'
 
-import { DragSource } from 'react-dnd'
+import { DragSource, DropTarget } from 'react-dnd'
 const CARD = 'CARD'
 
-const cardSource = {
+const source = {
   beginDrag(props, monitor, component) {
     const item = { id: props.id }
     return item
   }
 }
 
-@DragSource(CARD, cardSource, (connect, monitor) => ({
+const dragCollect = (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   isDragging: monitor.isDragging()
-}))
+})
+
+
+@DragSource(CARD, source, dragCollect)
 export default class Card extends Component {
   constructor(props) {
     super(props)

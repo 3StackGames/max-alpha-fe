@@ -25,6 +25,7 @@ const collect = (connect, monitor) => ({
 export default class Town extends Component {
   static propTypes = {
     lookup: PropTypes.object.isRequired,
+    check: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired,
     uiActs: PropTypes.object.isRequired,
     game: PropTypes.object.isRequired,

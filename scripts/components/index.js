@@ -9,6 +9,7 @@ import Field from './Field'
 import Castle from './Castle'
 import StructureDeck from './StructureDeck'
 import Courtyard from './Courtyard'
+import MainDeck from './MainDeck'
 
 export {
   Card,
@@ -21,5 +22,6 @@ export {
   Field,
   Castle,
   StructureDeck,
-  Courtyard
+  Courtyard,
+  MainDeck
 }

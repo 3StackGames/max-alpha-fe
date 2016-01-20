@@ -19,7 +19,8 @@ import {
   Field,
   Castle,
   StructureDeck,
-  Courtyard
+  Courtyard,
+  MainDeck
 } from '../components'
 import titleCase from 'title-case'
 import R from 'ramda'
@@ -92,14 +93,9 @@ export default class Game extends Component {
       <div className='board-container'>
         <div className='opponent-container'>
           <div className='collections-container'>
-            <div className='deck-container'>
-              <div className='container-label'><span>DECK</span></div>
-              <div className='deck-body'>
-                <div className='deck-placeholder'>
-                  {this.deckNodes('opponent')}
-                </div>
-              </div>
-            </div>
+            <MainDeck
+              lookup={this.lookup}
+              player='opponent' />
             <div className='grave-container'>
               <div className='container-label'><span>GRAVE</span></div>
               <div className='grave-body'>
@@ -216,14 +212,9 @@ export default class Game extends Component {
               <div className='grave-body'>
               </div>
             </div>
-            <div className='deck-container'>
-              <div className='container-label'><span>DECK</span></div>
-              <div className='deck-body'>
-                <div className='deck-placeholder'>
-                  {this.deckNodes('self')}
-                </div>
-              </div>
-            </div>
+            <MainDeck
+              lookup={this.lookup}
+              player='self' />
           </div>
           <Courtyard
             lookup={this.lookup}
@@ -429,15 +420,6 @@ export default class Game extends Component {
         color={color}
         value={this.lookup[target].player().resources.colors[color]} />
     )
-  }
-
-  deckNodes(target) {
-    return this.lookup[target].deck().map((id, i) => (
-      <FaceDownCard
-        style={{ transform: `translateX(${ i * -0.5 }px)` }}
-        key={i}
-        type='deck' />
-    ))
   }
 
   get endPhaseNode() {

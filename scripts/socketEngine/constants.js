@@ -8,6 +8,7 @@ const clientTypes = {
 const serverTypes = {
       GAME_FOUND: 'Game Found',
     STATE_UPDATE: 'State Update',
+   PLAYER_PROMPT: 'Player Prompt',
            ERROR: 'Error',
   SERVER_MESSAGE: 'Server Message'
 }

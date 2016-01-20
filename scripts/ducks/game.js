@@ -6,6 +6,7 @@ const initialState = {
   currentPlayer: null,
   gameCode: null,
   state: {},
+  promptQueue: [],
   cardList: []
 }
 const reducer = (state = initialState, action) => {

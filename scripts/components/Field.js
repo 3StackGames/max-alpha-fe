@@ -6,6 +6,24 @@ import Card from './Card'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { DropTarget } from 'react-dnd'
 
+const target = {
+  canDrop(props, monitor) {
+    // TODO: Add validation for when you can play a card
+    console.log('tried to drop')
+    return true
+  },
+
+  drop(props, monitor, component) {
+    props.uiActs.selectCard(monitor.getItem().id)
+    props.uiActs.declarePlayCard(monitor.getItem().id)
+  }
+}
+
+const collect = (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget()
+})
+
+@DropTarget(['CARD', 'STRUCTURE'], target, collect)
 export default class Field extends Component {
   static propTypes = {
     lookup: PropTypes.object.isRequired,
@@ -17,15 +35,17 @@ export default class Field extends Component {
   };
 
   render() {
-    return (
-      <ReactCSSTransitionGroup
-        component='div'
-        className='field-container'
-        transitionName='creature'
-        transitionEnterTimeout={250}
-        transitionLeaveTimeout={250}>
-        {this.creatureNodes}
-      </ReactCSSTransitionGroup>
+    return this.props.connectDropTarget(
+      <div className='field-container'>
+        <ReactCSSTransitionGroup
+          component='div'
+          className='field-body'
+          transitionName='creature'
+          transitionEnterTimeout={250}
+          transitionLeaveTimeout={250}>
+          {this.creatureNodes}
+        </ReactCSSTransitionGroup>
+      </div>
     )
   }
 

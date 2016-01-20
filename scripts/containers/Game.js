@@ -69,9 +69,9 @@ export default class Game extends Component {
       selectedCard: null
     }
 
-    // this.lookup = bindStateLookups(this, this.props.game)
     this.gameActs = bindActionCreators(gameActs, props.dispatch)
     this.uiActs = bindActionCreators(uiActs, props.dispatch)
+    engine.emitter.on(engine.types.PLAYER_PROMPT, this.bindPrompts)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -321,7 +321,7 @@ export default class Game extends Component {
 
   get promptNode() {
     const { selectedCard, playingCard } = this.props.ui
-    const { promptQueue } = this.props.game.state
+    const { promptQueue } = this.props.game
 
     if (
       !selectedCard
@@ -560,11 +560,11 @@ export default class Game extends Component {
   }
 
   get currentPromptStep() {
-    if (this.props.game.state.promptQueue.length === 0) {
+    if (this.props.game.promptQueue.length === 0) {
       return null
     }
 
-    const promptHead = this.props.game.state.promptQueue[0]
+    const promptHead = this.props.game.promptQueue[0]
     return promptHead.steps[promptHead.currentStep]
   }
 
@@ -670,7 +670,7 @@ export default class Game extends Component {
     ) {
       if (
         // There's no prompt queue
-        !this.props.game.state.promptQueue[0]
+        !this.props.game.promptQueue[0]
         // The card is on your field
         && this.lookup.self.creatures().find(fieldId => fieldId === id)
       ) {
@@ -678,9 +678,9 @@ export default class Game extends Component {
       }
       else if (
         // There is a prompt queue
-        this.props.game.state.promptQueue[0]
+        this.props.game.promptQueue[0]
         // The card is targetable
-        && this.props.game.state.promptQueue[0].steps[this.props.game.state.promptQueue[0].currentStep].targetables.find(target => target.id === id)
+        && this.props.game.promptQueue[0].steps[this.props.game.promptQueue[0].currentStep].targetables.find(target => target.id === id)
       ) {
         this.uiActs.selectCard(id)
       }
@@ -1037,12 +1037,12 @@ export default class Game extends Component {
       this.lookup[target][location]().find(id => id === findId)
 
     const queueExists = () =>
-      this.props.game.state.promptQueue[0]
+      this.props.game.promptQueue[0]
 
     const isTargetable = id =>
       queueExists
-      && this.props.game.state.promptQueue[0]
-           .steps[this.props.game.state.promptQueue[0].currentStep]
+      && this.props.game.promptQueue[0]
+           .steps[this.props.game.promptQueue[0].currentStep]
            .targetables.find(target => target.id === id)
 
     return {
@@ -1052,6 +1052,11 @@ export default class Game extends Component {
       queueExists,
       isTargetable
     }
+  }
+
+  bindPrompts(data) {
+    console.log('PROMPT UPDATE, YO!')
+    console.log(data)
   }
 
   bindState() {

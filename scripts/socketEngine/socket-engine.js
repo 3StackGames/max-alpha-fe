@@ -19,7 +19,7 @@ const SocketEngine = ({ host, port }) => {
 
   const mapMessageToEvent = event => {
     const data = JSON.parse(event.data)
-    const emitted = wsEmitter.emit(data.eventType, data)
+    wsEmitter.emit(data.eventType, data)
     emitToMiddleware(data)
   }
 
@@ -97,6 +97,7 @@ const SocketEngine = ({ host, port }) => {
     removeOnServerMessage,
     addOnStateUpdate,
     removeOnStateUpdate,
+    emitter: wsEmitter,
     types: {
       ...clientTypes,
       ...serverTypes,

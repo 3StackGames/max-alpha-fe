@@ -17,7 +17,8 @@ import {
   FaceDownCard,
   Town,
   Field,
-  Castle
+  Castle,
+  StructureDeck
 } from '../components'
 import titleCase from 'title-case'
 import R from 'ramda'
@@ -103,12 +104,12 @@ export default class Game extends Component {
               <div className='grave-body'>
               </div>
             </div>
-            <div className='structures-container'>
-              <div className='container-label'><span>STRUCTS</span></div>
-              <div className='structures-body'>
-                {this.structureNodes('opponent')}
-              </div>
-            </div>
+            <StructureDeck 
+              lookup={this.lookup}
+              check={this.check}
+              ui={this.props.ui}
+              uiActs={this.uiActs}
+              player='opponent' />
           </div>
           <div className='courtyard-container'>
             {this.courtyardNodes('opponent')}
@@ -200,12 +201,12 @@ export default class Game extends Component {
         </div>
         <div className='self-container'>
           <div className='collections-container'>
-            <div className='structures-container'>
-              <div className='container-label'><span>STRUCTS</span></div>
-              <div className='structures-body'>
-                {this.structureNodes('self')}
-              </div>
-            </div>
+            <StructureDeck
+              lookup={this.lookup}
+              check={this.check}
+              ui={this.props.ui}
+              uiActs={this.uiActs}
+              player='self' />
             <div className='grave-container'>
               <div className='container-label'><span>GRAVE</span></div>
               <div className='grave-body'>
@@ -432,67 +433,6 @@ export default class Game extends Component {
       ))
   }
 
-  castleNode(target) {
-    const { castle } = this.lookup[target].player()
-    return (
-      <div
-        className={cx('castle-body', {
-          'castle-body--selected': this.props.ui.selectedCard === castle.id
-        })}
-        onClick={e => this.handleCastleClick(e, castle.id)}>
-        {castle.currentHealth}
-      </div>
-    )
-  }
-
-  handNodes(target) {
-    return (
-      <Hand
-        ui={this.props.ui}
-        cards={this.lookup[target].hand().map(this.mapIdToCard)}
-        onCardClick={this.handleHandCardClick}
-        onCardMouseOver={this.handleHandCardMouseOver}
-        onCardMouseOut={this.handleHandCardMouseOut}
-        opponent={target === 'opponent'} />
-    )
-  }
-
-  creatureNodes(target) {
-    return this.lookup[target].creatures()
-      .map(this.mapIdToCard)
-      .map((card, i) => (
-        <Card
-          key={i}
-          shrink={this.lookup[target].creatures().length > 6}
-          type='field'
-          id={card.id}
-          zoomState={this.props.ui.zoomedCard === card.id}
-          selectState={this.props.ui.selectedCard === card.id}
-          onCardClick={this.handleFieldCardClick}
-          onCardMouseOver={this.handleFieldCardMouseOver}
-          onCardMouseOut={this.handleFieldCardMouseOut}
-          {...card} />
-      ))
-  }
-
-  townNodes(target) {
-    return this.lookup[target].town()
-      .map((id, i) => {
-        const color = this.lookup.card(id).dominantColor.toUpperCase()
-        return (
-          <WorkerOrb
-            key={i}
-            id={id}
-            color={color}
-            zoomState={this.props.ui.zoomedCard === id}
-            selectState={this.props.ui.selectedCard === id}
-            onOrbClick={this.handleWorkerClick}
-            onOrbOver={this.handleWorkerMouseOver}
-            onOrbOut={this.handleWorkerMouseOut} />
-        )
-      })
-  }
-
   resourceNode(target, color) {
     return (
       <ResourceOrb
@@ -507,20 +447,6 @@ export default class Game extends Component {
         style={{ transform: `translateX(${ i * -0.5 }px)` }}
         key={i}
         type='deck' />
-    ))
-  }
-
-  structureNodes(target) {
-    return this.lookup[target].structures().map(id => (
-      <div
-        className={cx('struct-deck-item', {
-          'struct-deck-item--selected': this.props.ui.selectedCard === id
-        })}
-        onClick={e => this.handleStructureDeckClick(e, id)}
-        onMouseOver={e => this.handleStructureDeckMouseOver(e, id)}
-        onMouseOut={e => this.handleStructureDeckMouseOut(e, id)}>
-       {this.lookup.card(id).name}
-      </div>
     ))
   }
 
@@ -572,14 +498,6 @@ export default class Game extends Component {
     return this.props.game.currentPlayer.playerId
   }
 
-  handleCastleClick(e, id) {
-    if (this.currentPromptStep) {
-      if (this.currentPromptStep.targetables.find(target => target.id === id)) {
-        this.uiActs.selectCard(id)
-      }
-    }
-  }
-
   handleStructureClick(e, id) {
     // if (this.check.isPhase('Main Phase')) {
     //   if (this.check.inLocation('self', 'courtyard', id)) {
@@ -603,87 +521,6 @@ export default class Game extends Component {
   handleStructureMouseOut(e, id) {
     if (this.check.inLocation('self', 'courtyard', id)) {
       this.uiActs.zoomCard(null)
-    }
-  }
-
-  handleStructureDeckClick(e, id) {
-    if (this.check.isPhase('Main Phase')) {
-      if (this.check.inLocation('self', 'structures', id)) {
-        this.uiActs.selectCard(id)
-      }
-    }
-
-    if (this.currentPromptStep) {
-      if (this.currentPromptStep.targetables.find(target => target.id === id)) {
-        this.uiActs.selectCard(id)
-      }
-    }
-  }
-
-  handleStructureDeckMouseOver(e, id) {
-    if (this.check.inLocation('self', 'structures', id)) {
-      this.uiActs.zoomCard(id)
-    }
-  }
-
-  handleStructureDeckMouseOut(e, id) {
-    if (this.check.inLocation('self', 'structures', id)) {
-      this.uiActs.zoomCard(null)
-    }
-  }
-  
-  handleHandCardClick(e, id) {
-    if (
-      this.check.isPhase('Main Phase')
-      && this.check.isTurn('self')
-      && this.check.inLocation('self', 'hand', id)
-    ) {
-        this.uiActs.selectCard(id)
-    }
-  }
-
-  handleHandCardMouseOver(e, id) {
-    if (this.check.inLocation('self', 'hand', id)) {
-      this.uiActs.zoomCard(id)
-    }
-  }
-
-  handleHandCardMouseOut(e, id) {
-    if (this.check.inLocation('self', 'hand', id)) {
-      this.uiActs.zoomCard(null)
-    }
-  }
-
-  handleFieldCardClick(e, id) {
-    if (
-      this.check.isPhase('Attack Phase')
-      && this.check.isTurn('self')
-    ) {
-      this.uiActs.selectCard(id)
-    }
-
-    if (
-      // It's block phase
-      this.props.game.state.currentPhase.name === 'Block Phase'
-      // It's not your turn
-      && this.props.game.state.players[this.props.game.state.turn].playerId !== this.currentPlayerId
-    ) {
-      if (
-        // There's no prompt queue
-        !this.props.game.promptQueue[0]
-        // The card is on your field
-        && this.lookup.self.creatures().find(fieldId => fieldId === id)
-      ) {
-        this.uiActs.selectCard(id)
-      }
-      else if (
-        // There is a prompt queue
-        this.props.game.promptQueue[0]
-        // The card is targetable
-        && this.props.game.promptQueue[0].steps[this.props.game.promptQueue[0].currentStep].targetables.find(target => target.id === id)
-      ) {
-        this.uiActs.selectCard(id)
-      }
     }
   }
 

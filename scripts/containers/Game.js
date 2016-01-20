@@ -20,7 +20,8 @@ import {
   Castle,
   StructureDeck,
   Courtyard,
-  MainDeck
+  MainDeck,
+  Grave
 } from '../components'
 import titleCase from 'title-case'
 import R from 'ramda'
@@ -96,11 +97,9 @@ export default class Game extends Component {
             <MainDeck
               lookup={this.lookup}
               player='opponent' />
-            <div className='grave-container'>
-              <div className='container-label'><span>GRAVE</span></div>
-              <div className='grave-body'>
-              </div>
-            </div>
+            <Grave
+              lookup={this.lookup}
+              player='opponent' />
             <StructureDeck 
               lookup={this.lookup}
               check={this.check}
@@ -207,11 +206,9 @@ export default class Game extends Component {
               ui={this.props.ui}
               uiActs={this.uiActs}
               player='self' />
-            <div className='grave-container'>
-              <div className='container-label'><span>GRAVE</span></div>
-              <div className='grave-body'>
-              </div>
-            </div>
+            <Grave
+              lookup={this.lookup}
+              player='self' />
             <MainDeck
               lookup={this.lookup}
               player='self' />
@@ -764,7 +761,7 @@ export default class Game extends Component {
       target.structureDeck.cardIds
 
     const lookupGrave = target =>
-      target.graveYard.cardIds
+      target.graveyard.cardIds
 
     const lookupCreatures = target =>
       target.field.cardIds

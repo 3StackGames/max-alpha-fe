@@ -11,6 +11,7 @@ import StructureDeck from './StructureDeck'
 import Courtyard from './Courtyard'
 import MainDeck from './MainDeck'
 import Grave from './Grave'
+import ResourceIndicator from './ResourceIndicator'
 
 export {
   Card,
@@ -25,5 +26,6 @@ export {
   StructureDeck,
   Courtyard,
   MainDeck,
-  Grave
+  Grave,
+  ResourceIndicator
 }

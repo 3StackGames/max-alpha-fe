@@ -21,7 +21,8 @@ import {
   StructureDeck,
   Courtyard,
   MainDeck,
-  Grave
+  Grave,
+  ResourceIndicator
 } from '../components'
 import titleCase from 'title-case'
 import R from 'ramda'
@@ -141,23 +142,9 @@ export default class Game extends Component {
               game={this.props.game}
               assignAction={this.assignAction}
               player='opponent' />
-            <div className='resource-indicator-container'>
-              <div className='resource-indicator-body'>
-                <div className='resource-row'>
-                  {this.resourceNode('opponent', 'WHITE')}
-                  {this.resourceNode('opponent', 'BLUE')}
-                </div>
-                <div className='resource-row'>
-                  {this.resourceNode('opponent', 'YELLOW')}
-                  {this.resourceNode('opponent', 'COLORLESS')}
-                  {this.resourceNode('opponent', 'GREEN')}
-                </div>
-                <div className='resource-row'>
-                  {this.resourceNode('opponent', 'RED')}
-                  {this.resourceNode('opponent', 'BLACK')}
-                </div>
-              </div>
-            </div>
+            <ResourceIndicator
+              lookup={this.lookup}
+              player='opponent' />
           </div>
         </div>
         <div className={cx('actions-container', {
@@ -238,23 +225,9 @@ export default class Game extends Component {
               player='self' />
           </div>
           <div className='resources-container'>
-            <div className='resource-indicator-container'>
-              <div className='resource-indicator-body'>
-                <div className='resource-row'>
-                  {this.resourceNode('self', 'WHITE')}
-                  {this.resourceNode('self', 'BLUE')}
-                </div>
-                <div className='resource-row'>
-                  {this.resourceNode('self', 'YELLOW')}
-                  {this.resourceNode('self', 'COLORLESS')}
-                  {this.resourceNode('self', 'GREEN')}
-                </div>
-                <div className='resource-row'>
-                  {this.resourceNode('self', 'RED')}
-                  {this.resourceNode('self', 'BLACK')}
-                </div>
-              </div>
-            </div>
+            <ResourceIndicator
+              lookup={this.lookup}
+              player='self' />
             <Town
               lookup={this.lookup}
               check={this.check}
@@ -409,14 +382,6 @@ export default class Game extends Component {
 
   get pullButton() {
     return <button onClick={this.pullAction}>Pull</button>
-  }
-
-  resourceNode(target, color) {
-    return (
-      <ResourceOrb
-        color={color}
-        value={this.lookup[target].player().resources.colors[color]} />
-    )
   }
 
   get endPhaseNode() {

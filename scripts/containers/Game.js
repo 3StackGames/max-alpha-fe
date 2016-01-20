@@ -18,7 +18,8 @@ import {
   Town,
   Field,
   Castle,
-  StructureDeck
+  StructureDeck,
+  Courtyard
 } from '../components'
 import titleCase from 'title-case'
 import R from 'ramda'
@@ -111,9 +112,12 @@ export default class Game extends Component {
               uiActs={this.uiActs}
               player='opponent' />
           </div>
-          <div className='courtyard-container'>
-            {this.courtyardNodes('opponent')}
-          </div>
+          <Courtyard
+            lookup={this.lookup}
+            check={this.check}
+            ui={this.props.ui}
+            uiActs={this.uiActs}
+            player='opponent' />
           <div className='playing-container'>
             <Hand
               lookup={this.lookup}
@@ -221,9 +225,12 @@ export default class Game extends Component {
               </div>
             </div>
           </div>
-          <div className='courtyard-container'>
-            {this.courtyardNodes('self')}
-          </div>
+          <Courtyard
+            lookup={this.lookup}
+            check={this.check}
+            ui={this.props.ui}
+            uiActs={this.uiActs}
+            player='self' />
           <div className='playing-container'>
             <Field
               lookup={this.lookup}
@@ -416,23 +423,6 @@ export default class Game extends Component {
     return <button onClick={this.pullAction}>Pull</button>
   }
 
-  courtyardNodes(target) {
-    return this.lookup[target].courtyard()
-      .map(this.mapIdToCard)
-      .map(structure => (
-        <div
-          className={cx('courtyard-card', {
-            'courtyard-card--selected': this.props.ui.selectedCard === structure.id
-          })}
-          onClick={e => this.handleStructureClick(e, structure.id)}
-          onMouseOver={e => this.handleStructureMouseOver(e, structure.id)}
-          onMouseOut={e => this.handleStructureMouseOut(e, structure.id)}>
-          <div>Name: {structure.name}</div>
-          <div>HP: {structure.currentHealth}</div>
-        </div>
-      ))
-  }
-
   resourceNode(target, color) {
     return (
       <ResourceOrb
@@ -496,32 +486,6 @@ export default class Game extends Component {
 
   get currentPlayerId() {
     return this.props.game.currentPlayer.playerId
-  }
-
-  handleStructureClick(e, id) {
-    // if (this.check.isPhase('Main Phase')) {
-    //   if (this.check.inLocation('self', 'courtyard', id)) {
-    //     this.uiActs.selectCard(id)
-    //   }
-    // }
-
-    if (this.currentPromptStep) {
-      if (this.currentPromptStep.targetables.find(target => target.id === id)) {
-        this.uiActs.selectCard(id)
-      }
-    }
-  }
-
-  handleStructureMouseOver(e, id) {
-    if (this.check.inLocation('self', 'courtyard', id)) {
-      this.uiActs.zoomCard(id)
-    }
-  }
-
-  handleStructureMouseOut(e, id) {
-    if (this.check.inLocation('self', 'courtyard', id)) {
-      this.uiActs.zoomCard(null)
-    }
   }
 
   UIPlayAction() {

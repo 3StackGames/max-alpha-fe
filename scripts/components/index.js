@@ -8,6 +8,7 @@ import Town from './Town'
 import Field from './Field'
 import Castle from './Castle'
 import StructureDeck from './StructureDeck'
+import Courtyard from './Courtyard'
 
 export {
   Card,
@@ -19,5 +20,6 @@ export {
   Town,
   Field,
   Castle,
-  StructureDeck
+  StructureDeck,
+  Courtyard
 }

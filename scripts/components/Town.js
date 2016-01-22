@@ -68,7 +68,7 @@ export default class Town extends Component {
 
   @autobind
   handleWorkerClick(e, id) {
-    if (this.props.game.state.currentPhase.name === 'Main Phase') {
+    if (this.props.check.isPhase('Main Phase')) {
       this.props.uiActs.selectCard(id)
     }
   }

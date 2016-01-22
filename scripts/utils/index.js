@@ -1,14 +1,14 @@
 import R from 'ramda'
 import { bindStateDecorator } from './bindStateDecorator'
-import { lookupDecorator } from './lookupDecorator'
-import { checkDecorator } from './checkDecorator'
 import { keys } from './constants'
+import stateLookups from './stateLookups'
+import stateChecks from './stateChecks'
 
 export {
   bindStateDecorator,
-  lookupDecorator,
-  checkDecorator,
-  keys
+  keys,
+  stateLookups,
+  stateChecks
 }
 
 

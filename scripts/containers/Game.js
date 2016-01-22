@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as gameActs from '../ducks/game'
 import * as uiActs from '../ducks/ui'
-import { bindStateDecorator, lookupDecorator } from '../utils'
+import { bindStateDecorator, stateLookups, stateChecks } from '../utils'
 import {
   Hand,
   Card,
@@ -240,10 +240,6 @@ export default class Game extends Component {
         </div>
       </div>
     )
-  }
-
-  mapIdToCard(id) {
-    return this.lookup.card(id)
   }
 
   get zoomNode() {
@@ -705,98 +701,11 @@ export default class Game extends Component {
   }
 
   get lookup() {
-    const lookupCard = id => {
-      const card = this.props.game.cardList[id]
-      return card.value || { id }
-    }
-
-    const self = () =>
-      this.props.game.state.players[this.props.game.currentPlayer.playerIndex]
-
-    const opponent = () =>
-      this.props.game.state.players[this.props.game.currentPlayer.playerIndex === 0 ? 1 : 0]
-
-    const lookupHand = target =>
-      target.hand.cardIds
-
-    const lookupDeck = target =>
-      target.mainDeck.cardIds
-
-    const lookupStructures = target =>
-      target.structureDeck.cardIds
-
-    const lookupGrave = target =>
-      target.graveyard.cardIds
-
-    const lookupCreatures = target =>
-      target.field.cardIds
-
-    const lookupCourtyard = target =>
-      target.courtyard.cardIds
-
-    const lookupTown = target =>
-      target.town.cardIds
-
-    return {
-      card: lookupCard,
-      self: {
-        player: self,
-        hand: R.pipe(self, lookupHand),
-        deck: R.pipe(self, lookupDeck),
-        structures: R.pipe(self, lookupStructures),
-        grave: R.pipe(self, lookupGrave),
-        creatures: R.pipe(self, lookupCreatures),
-        courtyard: R.pipe(self, lookupCourtyard),
-        town: R.pipe(self, lookupTown)
-      },
-      opponent: {
-        player: opponent,
-        hand: R.pipe(opponent, lookupHand),
-        deck: R.pipe(opponent, lookupDeck),
-        structures: R.pipe(opponent, lookupStructures),
-        grave: R.pipe(opponent, lookupGrave),
-        creatures: R.pipe(opponent, lookupCreatures),
-        courtyard: R.pipe(opponent, lookupCourtyard),
-        town: R.pipe(opponent, lookupTown)
-      }
-    }
+    return stateLookups(this.props.game)
   }
 
   get check() {
-    const isPhase = name =>
-      this.props.game.state.currentPhase.name === name
-
-    const isTurn = target => {
-      const currentTurn = this.props.game.state.turn
-      const currentPlayerIndex = this.props.game.currentPlayer.playerIndex
-
-      if (target === 'self') {
-        return currentTurn === currentPlayerIndex
-      }
-      if (target === 'opponent') {
-        return currentTurn !== currentPlayerIndex
-      }
-    }
-
-    const inLocation = (target, location, findId) =>
-      this.lookup[target][location]().find(id => id === findId)
-
-    const queueExists = () =>
-      this.props.game.promptQueue[0]
-
-    const isTargetable = id =>
-      queueExists
-      && this.props.game.promptQueue[0]
-           .steps[this.props.game.promptQueue[0].currentStep]
-           .targetables.find(target => target.id === id)
-
-    return {
-      isPhase,
-      isTurn,
-      inLocation,
-      queueExists,
-      isTargetable
-    }
+    return stateChecks(this.props.game)
   }
 
   bindPrompts(data) {

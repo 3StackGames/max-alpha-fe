@@ -29,6 +29,7 @@ export default class StructureDeck extends Component {
         const { id, name } = struct
         return (
           <div
+            key={id}
             className={cx('struct-deck-item', {
               'struct-deck-item--selected': this.props.ui.selectedCard === id
             })}

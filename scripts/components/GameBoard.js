@@ -1,14 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
-import ReactDOM, { render } from 'react-dom'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
-import engine from '../engine'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as gameActs from '../ducks/game'
-import * as uiActs from '../ducks/ui'
-import { bindStateDecorator, stateLookups, stateChecks } from '../utils'
 import {
   Hand,
   Card,
@@ -24,68 +16,12 @@ import {
   Grave,
   ResourceIndicator
 } from '../components'
-import titleCase from 'title-case'
-import R from 'ramda'
 
-import { DragSource, DropTarget } from 'react-dnd'
-const CARD = 'CARD'
-const WORKER = 'WORKER'
-
-const target = {
-  canDrop(props, monitor) {
-    if (monitor.getItemType() === CARD) {
-      return true
-    }
-
-    if (monitor.getItemType() === WORKER) {
-      return true
-    }
-
-    return false
-  },
-
-  drop(props, monitor, component) {
-    console.log('DROP')
-    console.log(monitor.getItemType())
-    // Card being dropped in a worker zone
-    if (monitor.getItemType() === CARD) {
-      component.uiActs.selectCard(monitor.getItem().id)
-      component.assignAction()
-    }
-
-    // Worker being dropped in a hand zone
-    if (monitor.getItemType() === WORKER) {
-      component.uiActs.selectCard(monitor.getItem().id)
-      component.pullAction()
-    }
-  }
-}
-
-@connect(state => ({
-  game: state.game,
-  ui: state.ui
-}))
 @autobind
-@bindStateDecorator(engine)
-export default class Game extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      selectedCard: null
-    }
-
-    this.gameActs = bindActionCreators(gameActs, props.dispatch)
-    this.uiActs = bindActionCreators(uiActs, props.dispatch)
-    engine.emitter.on(engine.types.PLAYER_PROMPT, this.bindPrompts)
-  }
-
+export default class GameBoard extends Component {
   componentWillReceiveProps(nextProps) {
-    // if (this.props.game !== nextProps.game) {
-    //   this.lookup = bindStateLookups(this, nextProps.game)
-    // }
-
     if (nextProps.ui.playingCard && nextProps.ui.selectedCard !== nextProps.ui.playingCard) {
-      this.uiActs.cancelDeclaration()
+      this.props.uiActs.cancelDeclaration()
     }
   }
 
@@ -96,54 +32,54 @@ export default class Game extends Component {
         <div className='opponent-container'>
           <div className='collections-container'>
             <MainDeck
-              lookup={this.lookup}
+              lookup={props.lookup}
               player='opponent' />
             <Grave
-              lookup={this.lookup}
+              lookup={props.lookup}
               player='opponent' />
             <StructureDeck 
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
               player='opponent' />
           </div>
           <Courtyard
-            lookup={this.lookup}
-            check={this.check}
-            ui={this.props.ui}
-            uiActs={this.uiActs}
+            lookup={props.lookup}
+            check={props.check}
+            ui={props.ui}
+            uiActs={props.uiActs}
             player='opponent' />
           <div className='playing-container'>
             <Hand
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               pullAction={this.pullAction}
               player='opponent' />
             <Field
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               smoothAttackAction={this.smoothAttackAction}
               smoothBlockAction={this.smoothBlockAction}
               player='opponent' />
           </div>
           <div className='resources-container'>
             <Town
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               assignAction={this.assignAction}
               player='opponent' />
             <ResourceIndicator
-              lookup={this.lookup}
+              lookup={props.lookup}
               player='opponent' />
           </div>
         </div>
@@ -168,19 +104,19 @@ export default class Game extends Component {
           </div>
           <div className='castles-container'>
             <Castle
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               smoothAttackAction={this.smoothAttackAction}
               player='opponent' />
             <Castle
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               smoothAttackAction={this.smoothAttackAction}
               player='self' />
           </div>
@@ -188,52 +124,52 @@ export default class Game extends Component {
         <div className='self-container'>
           <div className='collections-container'>
             <StructureDeck
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
               player='self' />
             <Grave
-              lookup={this.lookup}
+              lookup={props.lookup}
               player='self' />
             <MainDeck
-              lookup={this.lookup}
+              lookup={props.lookup}
               player='self' />
           </div>
           <Courtyard
-            lookup={this.lookup}
-            check={this.check}
-            ui={this.props.ui}
-            uiActs={this.uiActs}
+            lookup={props.lookup}
+            check={props.check}
+            ui={props.ui}
+            uiActs={props.uiActs}
             player='self' />
           <div className='playing-container'>
             <Field
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               smoothAttackAction={this.smoothAttackAction}
               player='self' />
             <Hand
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               pullAction={this.pullAction}
               player='self' />
           </div>
           <div className='resources-container'>
             <ResourceIndicator
-              lookup={this.lookup}
+              lookup={props.lookup}
               player='self' />
             <Town
-              lookup={this.lookup}
-              check={this.check}
-              ui={this.props.ui}
-              uiActs={this.uiActs}
-              game={this.props.game}
+              lookup={props.lookup}
+              check={props.check}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              game={props.game}
               assignAction={this.assignAction}
               player='self' />
           </div>
@@ -254,7 +190,7 @@ export default class Game extends Component {
         </div>
       ]
     }
-    const card = this.lookup.card(zoomedCard)
+    const card = this.props.lookup.card(zoomedCard)
     const costNodes = Object.keys(card.currentCost.colors)
       .filter(color => card.currentCost.colors[color] > 0)
       .map(color => {
@@ -298,13 +234,13 @@ export default class Game extends Component {
 
     if (promptQueue.length > 0) {
       return [
-        <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + this.lookup.card(selectedCard).name : 'Select a target'}</div>,
+        <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + this.props.lookup.card(selectedCard).name : 'Select a target'}</div>,
         <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
       ]
     }
 
     if (playingCard) {
-      const colorResources = this.lookup.self.player().resources.colors
+      const colorResources = this.props.lookup.self.player().resources.colors
       return [
         <div key={0} className='prompt-item'>
           Cost: (1)(2)(3)
@@ -314,7 +250,7 @@ export default class Game extends Component {
             Object.keys(colorResources)
               .filter(color => colorResources[color] > 0)
               .map(color => (
-                <button onClick={() => this.uiActs.assignCost(color, (this.props.ui.cost.colors[color]) + 1)}>{color}: {this.props.ui.cost.colors[color]}</button>
+                <button onClick={() => this.props.uiActs.assignCost(color, (this.props.ui.cost.colors[color]) + 1)}>{color}: {this.props.ui.cost.colors[color]}</button>
               ))
           }
         </div>,
@@ -324,7 +260,7 @@ export default class Game extends Component {
       ]
     }
 
-    if (this.check.inLocation('self', 'hand', selectedCard)) {
+    if (this.props.check.inLocation('self', 'hand', selectedCard)) {
       if (!this.hasAssignedOrPulled('self')) {
         return this.buildPromptButtons(this.playButton, this.assignButton)
       }
@@ -332,22 +268,22 @@ export default class Game extends Component {
       return this.buildPromptButtons(this.playButton)
     }
 
-    if (this.check.inLocation('self', 'structures', selectedCard)) {
+    if (this.props.check.inLocation('self', 'structures', selectedCard)) {
       return this.buildPromptButtons(this.playButton)
     }
 
-    if (this.check.inLocation('self', 'creatures', selectedCard)) {
-      if (this.check.isPhase('Attack Phase') && this.check.isTurn('self')) {
+    if (this.props.check.inLocation('self', 'creatures', selectedCard)) {
+      if (this.props.check.isPhase('Attack Phase') && this.props.check.isTurn('self')) {
         return this.buildPromptButtons(this.attackButton)
       }
 
-      if (this.check.isPhase('Block Phase') && this.check.isTurn('opponent')) {
+      if (this.props.check.isPhase('Block Phase') && this.props.check.isTurn('opponent')) {
         return this.buildPromptButtons(this.blockButton)
       }
     }
 
     if (
-      this.check.inLocation('self', 'town', selectedCard) 
+      this.props.check.inLocation('self', 'town', selectedCard) 
       && !this.hasAssignedOrPulled('self')
     ) {
       return this.buildPromptButtons(this.pullButton)
@@ -381,8 +317,8 @@ export default class Game extends Component {
   }
 
   get endPhaseNode() {
-    if (this.check.isTurn('self')) {
-      if (this.check.isPhase('Main Phase')) {
+    if (this.props.check.isTurn('self')) {
+      if (this.props.check.isPhase('Main Phase')) {
         if (this.props.game.state.combatEnded) {
           return <button onClick={this.finishPhaseAction}>END TURN</button>
         }
@@ -392,15 +328,15 @@ export default class Game extends Component {
         ]
       }
 
-      if (this.check.isPhase('Attack Phase')) {
+      if (this.props.check.isPhase('Attack Phase')) {
         return [
           <button key={0} onClick={this.finishPhaseAction}>Launch Attack</button>
         ]
       }
     }
 
-    if (this.check.isTurn('opponent')) {
-      if (this.check.isPhase('Block Phase')) {
+    if (this.props.check.isTurn('opponent')) {
+      if (this.props.check.isPhase('Block Phase')) {
         return (
           <button
             onClick={this.finishPhaseAction}>
@@ -412,7 +348,7 @@ export default class Game extends Component {
   }
 
   hasAssignedOrPulled(target) {
-    return this.lookup[target].player().hasAssignedOrPulled
+    return this.props.lookup[target].player().hasAssignedOrPulled
   }
 
   get currentPromptStep() {
@@ -429,26 +365,26 @@ export default class Game extends Component {
   }
 
   UIPlayAction() {
-    this.uiActs.declarePlayCard(this.props.ui.selectedCard)
+    this.props.uiActs.declarePlayCard(this.props.ui.selectedCard)
   }
 
   UIAssignCostAction(color, value) {
-    this.uiActs.assignCost(color, value)
+    this.props.uiActs.assignCost(color, value)
   }
 
   UIAttackAction() {
     this.declareAttackAction()
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   UIBlockAction() {
     this.declareBlockAction()
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   assignAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         playerId: this.currentPlayerId,
@@ -456,23 +392,23 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   playAction() {
     const { selectedCard } = this.props.ui
     let playType
 
-    if (this.check.inLocation('self', 'hand', selectedCard)) {
+    if (this.props.check.inLocation('self', 'hand', selectedCard)) {
       playType = 'Play Card'
     }
 
-    if (this.check.inLocation('self', 'structures', selectedCard)) {
+    if (this.props.check.inLocation('self', 'structures', selectedCard)) {
       playType = 'Build Structure'
     }
 
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: playType,
@@ -481,13 +417,13 @@ export default class Game extends Component {
         cost: this.props.ui.cost
       }
     })
-    this.uiActs.selectCard(null)
-    this.uiActs.cancelDeclaration()
+    this.props.uiActs.selectCard(null)
+    this.props.uiActs.cancelDeclaration()
   }
 
   pullAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Pull Card',
@@ -495,12 +431,12 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   declareAttackAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Declare Attacker',
@@ -508,12 +444,11 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
-    // this.uiActs.declareAttackCard(null)
   }
 
   declareBlockAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Declare Blocker',
@@ -521,12 +456,11 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
-    // this.uiActs.declareBlockCard(null)
   }
 
   singleTargetPromptAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Single Target Prompt',
@@ -534,36 +468,36 @@ export default class Game extends Component {
         cardId: this.props.ui.selectedCard
       }
     })
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   finishPhaseAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Finish Phase',
         playerId: this.currentPlayerId
       }
     })
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   endTurnWithoutCombatAction() {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'End Turn Without Combat',
         playerId: this.currentPlayerId
       }
     })
-    this.uiActs.selectCard(null)
+    this.props.uiActs.selectCard(null)
   }
 
   smoothAttackAction(attackerId, targetId) {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Declare Attacker',
@@ -575,8 +509,8 @@ export default class Game extends Component {
   }
 
   smoothBlockAction(blockerId, targetId) {
-    engine.send({
-      eventType: engine.types.GAME_ACTION,
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Declare Blocker',
@@ -589,7 +523,7 @@ export default class Game extends Component {
 
   get playingActionUIViewNode() {
     const cardId = this.props.ui.playingCard
-    const playerResources = this.lookup.self.player().resources.colors
+    const playerResources = this.props.lookup.self.player().resources.colors
     const costButtonNodes = Object.keys(playerResources)
       .filter(color => playerResources[color] > 0)
       .map(color => {
@@ -597,14 +531,14 @@ export default class Game extends Component {
         return (
           <div key={color}>
             <button
-              onClick={() => this.uiActs.assignCost(color, colorValue + 1)}>
+              onClick={() => this.props.uiActs.assignCost(color, colorValue + 1)}>
               {color}: {colorValue}
             </button>
           </div>
         )
       })
 
-    const card = this.lookup.card(cardId)
+    const card = this.props.lookup.card(cardId)
     const cardCost = card.currentCost.colors
     const costNodes = Object.keys(cardCost)
       .filter(color => cardCost[color] > 0)
@@ -613,15 +547,15 @@ export default class Game extends Component {
       ))
     const playCard = () => {
       this.playAction()
-      this.uiActs.declarePlayCard(null)
-      this.uiActs.selectCard(null)
+      this.props.uiActs.declarePlayCard(null)
+      this.props.uiActs.selectCard(null)
     }
 
     return (
       <div>
         <div>{costNodes}</div>
         {costButtonNodes}
-        <button onClick={() => this.uiActs.declarePlayCard(null)}>Cancel</button>
+        <button onClick={() => this.props.uiActs.declarePlayCard(null)}>Cancel</button>
         <button onClick={() => playCard()}>PLAY</button>
       </div>
     )
@@ -632,7 +566,7 @@ export default class Game extends Component {
     if (selectedCard) {
       return (
         <div>
-          <p>Targeting: {this.lookup.card(selectedCard).name}</p>
+          <p>Targeting: {this.props.lookup.card(selectedCard).name}</p>
           <button onClick={this.declareAttackAction}>Attack</button>
         </div>
       )
@@ -649,7 +583,7 @@ export default class Game extends Component {
     if (selectedCard) {
       return (
         <div>
-          <p>Targeting: {this.lookup.card(selectedCard).name}</p>
+          <p>Targeting: {this.props.lookup.card(selectedCard).name}</p>
           <button onClick={this.singleTargetPromptAction}>Target</button>
         </div>
       )
@@ -667,7 +601,7 @@ export default class Game extends Component {
     }
 
     return (
-      <pre>{JSON.stringify(this.lookup.card(this.props.ui.zoomedCard), null, 2)}</pre>
+      <pre>{JSON.stringify(this.props.lookup.card(this.props.ui.zoomedCard), null, 2)}</pre>
     )
   }
 
@@ -698,22 +632,5 @@ export default class Game extends Component {
           onClick={this.finishPhaseAction}>{buttonText}</button>
       </div>
     )
-  }
-
-  get lookup() {
-    return stateLookups(this.props.game)
-  }
-
-  get check() {
-    return stateChecks(this.props.game)
-  }
-
-  bindPrompts(data) {
-    console.log('PROMPT UPDATE, YO!')
-    console.log(data)
-  }
-
-  bindState() {
-    this.gameActs.stateUpdate(engine.getState())
   }
 }

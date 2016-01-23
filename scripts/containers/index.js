@@ -1,11 +1,11 @@
 import App from './App'
 import Sink from './Sink'
 import MatchMaker from './MatchMaker'
-import Game from './Game'
+import GamePage from './GamePage'
 
 export {
   App,
   Sink,
   MatchMaker,
-  Game
+  GamePage
 }

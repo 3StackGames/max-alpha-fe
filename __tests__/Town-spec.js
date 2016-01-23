@@ -157,11 +157,53 @@ describeWithDOM('<Town/>', () => {
     expect(selectCard.calledOnce).to.equal(false)
   })
 
-  // it("zooms a worker on mouse over", () => {
+  it("zooms a worker on mouse over", function() {
+    const { TownContext } = this
+    const zoomCard = sinon.spy()
+    const mockUiActs = {
+      ...this.mockUiActs,
+      zoomCard
+    }
 
-  // })
+    const wrapper = mount(
+      <TownContext
+        lookup={this.mockLookup}
+        check={this.mockCheck}
+        ui={this.mockUi}
+        uiActs={mockUiActs}
+        game={this.mockGame}
+        assignAction={this.mockAssignAction}
+        player={this.mockPlayer} />
+    )
+    const orb = wrapper.find(WorkerOrb).map(n => n)[0]
+    orb.simulate('mouseOver')
+    expect(zoomCard.called).to.equal(true)
+    expect(zoomCard.args[0][0]).to.equal(this.mockLookup.self.town()[0])
+  })
 
-  // it("unzooms a worker on mouse out", () => {
+  it("unzooms a worker on mouse out", function() {
+    const { TownContext } = this
+    const zoomCard = sinon.spy()
+    const mockUiActs = {
+      ...this.mockUiActs,
+      zoomCard
+    }
 
-  // })
+    const wrapper = mount(
+      <TownContext
+        lookup={this.mockLookup}
+        check={this.mockCheck}
+        ui={this.mockUi}
+        uiActs={mockUiActs}
+        game={this.mockGame}
+        assignAction={this.mockAssignAction}
+        player={this.mockPlayer} />
+    )
+    const orb = wrapper.find(WorkerOrb).map(n => n)[0]
+    orb.simulate('mouseOver')
+    zoomCard.reset()
+    orb.simulate('mouseOut')
+    expect(zoomCard.called).to.equal(true)
+    expect(zoomCard.args[0][0]).to.equal(null)
+  })
 })

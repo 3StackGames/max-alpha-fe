@@ -5,13 +5,13 @@ import {
   App,
   Sink,
   MatchMaker,
-  Game
+  GamePage
 } from './containers'
 
 const AppRouter = (
   <Router>
     <Route path='/' component={App}>
-      <Route path='game' component={Game} />
+      <Route path='game' component={GamePage} />
       <IndexRoute component={MatchMaker} />
     </Route>
     <Route path='/sink' component={Sink} />

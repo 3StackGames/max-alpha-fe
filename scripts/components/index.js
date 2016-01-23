@@ -1,3 +1,4 @@
+import GameBoard from './GameBoard'
 import Card from './Card'
 import Hand from './Hand'
 import ResourcePool from './ResourcePool'
@@ -14,6 +15,7 @@ import Grave from './Grave'
 import ResourceIndicator from './ResourceIndicator'
 
 export {
+  GameBoard,
   Card,
   Hand,
   ResourcePool,

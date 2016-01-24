@@ -14,8 +14,9 @@ import {
   Courtyard,
   MainDeck,
   Grave,
-  ResourceIndicator
-} from '../components'
+  ResourceIndicator,
+  ZoomView
+} from '.'
 
 @autobind
 export default class GameBoard extends Component {
@@ -83,14 +84,10 @@ export default class GameBoard extends Component {
               player='opponent' />
           </div>
         </div>
-        <div className={cx('actions-container', {
-            'actions-container--zoomed': this.props.ui.zoomedCard
-          })}>
-          <div className='zoom-container'>
-            <div className='zoom-body'>
-              {this.zoomNode}
-            </div>
-          </div>
+        <div className='actions-container'>
+          <ZoomView
+            ui={this.props.ui}
+            lookup={this.props.lookup} />
           <div className='phase-container'>
             <div className='currentphase-group group'>
               {this.props.game.state.currentPhase.name}

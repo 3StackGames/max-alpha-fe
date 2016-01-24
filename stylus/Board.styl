@@ -27,6 +27,7 @@ $hand-height = 90px
     
 .actions-container
   height: $actions-height
+  position: relative
 
 .collections-container
   width: $collections-width
@@ -149,20 +150,22 @@ $hand-height = 90px
   align-items: center
 
 .zoom-container
-  width: 0
   z-index: 2
+  position: absolute
+  height: 100%
 
 .zoom-body
-  width: 50vw
-  transform: translateX(-50vw)
-  opacity: 0
-  height: 100%
-  transition: all 250ms ease
   display: flex
   background: white
-  position: relative
+  width: 50vw
+  transform: translateX(-50vw)
+  transition: all 250ms ease
+
+.zoom-container--zoomed .zoom-body
+  opacity: 1
   box-shadow 0px 1px 6px 0px rgba(0,0,0,0.1)
-    
+  transform: translateX(0)
+  transition: all 250ms ease
 
 .zoom-info-group,
 .zoom-effects-group
@@ -259,10 +262,11 @@ $hand-height = 90px
   // margin-left: auto
   // border: 1px solid transparentify(black, 0.1)
 
-.actions-container--zoomed
-  .zoom-body
-    transform: translateX(0)
-    opacity: 1
+// .actions-container--zoomed
+//   .zoom-body
+//     transform: translateX(0)
+//     opacity: 1
 
-  .prompt-container
-    margin-left: 0
+//   .prompt-container
+//     margin-left: 0
+

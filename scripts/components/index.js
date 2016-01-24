@@ -13,6 +13,7 @@ import Courtyard from './Courtyard'
 import MainDeck from './MainDeck'
 import Grave from './Grave'
 import ResourceIndicator from './ResourceIndicator'
+import ZoomView from './ZoomView'
 
 export {
   GameBoard,
@@ -29,5 +30,6 @@ export {
   Courtyard,
   MainDeck,
   Grave,
-  ResourceIndicator
+  ResourceIndicator,
+  ZoomView
 }

@@ -218,26 +218,28 @@ export default class GameBoard extends Component {
   }
 
   get promptNode() {
-    const { selectedCard, playingCard } = this.props.ui
-    const { promptQueue } = this.props.game
+    const { check, lookup, ui, uiActs } = this.props
+    const { selectedCard, playingCard } = ui
 
     if (
       !selectedCard
       && !playingCard
-      && promptQueue.length === 0
+      && !check.promptExists
     ) {
       return
     }
 
-    if (promptQueue.length > 0) {
+    console.log(check.promptExists)
+
+    if (check.promptExists) {
       return [
-        <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + this.props.lookup.card(selectedCard).name : 'Select a target'}</div>,
+        <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + lookup.card(selectedCard).name : 'Select a target'}</div>,
         <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
       ]
     }
 
     if (playingCard) {
-      const colorResources = this.props.lookup.self.player().resources.colors
+      const colorResources = lookup.self.player().resources.colors
       return [
         <div key={0} className='prompt-item'>
           Cost: (1)(2)(3)
@@ -247,7 +249,7 @@ export default class GameBoard extends Component {
             Object.keys(colorResources)
               .filter(color => colorResources[color] > 0)
               .map(color => (
-                <button onClick={() => this.props.uiActs.assignCost(color, (this.props.ui.cost.colors[color]) + 1)}>{color}: {this.props.ui.cost.colors[color]}</button>
+                <button onClick={() => uiActs.assignCost(color, (ui.cost.colors[color]) + 1)}>{color}: {ui.cost.colors[color]}</button>
               ))
           }
         </div>,
@@ -257,31 +259,33 @@ export default class GameBoard extends Component {
       ]
     }
 
-    if (this.props.check.inLocation('self', 'hand', selectedCard)) {
-      if (!this.hasAssignedOrPulled('self')) {
+    const { hasAssignedOrPulled } = lookup.self.player
+
+    if (check.inLocation('self', 'hand', selectedCard)) {
+      if (!hasAssignedOrPulled) {
         return this.buildPromptButtons(this.playButton, this.assignButton)
       }
 
       return this.buildPromptButtons(this.playButton)
     }
 
-    if (this.props.check.inLocation('self', 'structures', selectedCard)) {
+    if (check.inLocation('self', 'structures', selectedCard)) {
       return this.buildPromptButtons(this.playButton)
     }
 
-    if (this.props.check.inLocation('self', 'creatures', selectedCard)) {
-      if (this.props.check.isPhase('Attack Phase') && this.props.check.isTurn('self')) {
+    if (check.inLocation('self', 'creatures', selectedCard)) {
+      if (check.isPhase('Attack Phase') && check.isTurn('self')) {
         return this.buildPromptButtons(this.attackButton)
       }
 
-      if (this.props.check.isPhase('Block Phase') && this.props.check.isTurn('opponent')) {
+      if (check.isPhase('Block Phase') && this.props.check.isTurn('opponent')) {
         return this.buildPromptButtons(this.blockButton)
       }
     }
 
     if (
-      this.props.check.inLocation('self', 'town', selectedCard) 
-      && !this.hasAssignedOrPulled('self')
+      check.inLocation('self', 'town', selectedCard) 
+      && !hasAssignedOrPulled
     ) {
       return this.buildPromptButtons(this.pullButton)
     }
@@ -342,19 +346,6 @@ export default class GameBoard extends Component {
         )
       }
     }
-  }
-
-  hasAssignedOrPulled(target) {
-    return this.props.lookup[target].player().hasAssignedOrPulled
-  }
-
-  get currentPromptStep() {
-    if (this.props.game.promptQueue.length === 0) {
-      return null
-    }
-
-    const promptHead = this.props.game.promptQueue[0]
-    return promptHead.steps[promptHead.currentStep]
   }
 
   get currentPlayerId() {

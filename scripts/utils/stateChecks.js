@@ -18,20 +18,20 @@ const isTurn = game => target => {
 const inLocation = game => (target, location, findId) =>
   stateLookups(game)[target][location]().find(id => id === findId)
 
-const queueExists = game => () =>
-  game.promptQueue[0]
+const promptExists = game =>
+  game.prompt
 
 const isTargetable = game => id =>
-  queueExists(game)
-  && game.promptQueue[0]
-       .steps[game.promptQueue[0].currentStep]
-       .targetables.find(target => target.id === id)
+  promptExists(game)
+  && game.prompt
+       .steps[game.prompt.currentStep]
+       .targetableIds.find(targetId => targetId === id)
 
 const stateChecks = game => ({
   isPhase: isPhase(game),
   isTurn: isTurn(game),
   inLocation: inLocation(game),
-  queueExists: queueExists(game),
+  promptExists: promptExists(game),
   isTargetable: isTargetable(game)
 })
 

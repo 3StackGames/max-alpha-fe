@@ -16,7 +16,6 @@ const deckId = '568ec4b9bbdcf16c2c000003'
   game: state.game
 }))
 @autobind
-@bindStateDecorator(engine)
 export default class MatchMaker extends Component {
   constructor(props) {
     super(props)
@@ -26,6 +25,7 @@ export default class MatchMaker extends Component {
       connected: false
     }
 
+    engine.emitter.on(engine.types.STATE_UPDATE, this.bindState)
     this.gameActs = bindActionCreators(gameActs, props.dispatch)
   }
 
@@ -133,7 +133,12 @@ export default class MatchMaker extends Component {
   //   })
   // }
 
-  bindState() {
-    this.gameActs.stateUpdate(engine.getState())
+  @autobind
+  bindState(data) {
+    this.gameActs.stateUpdate({
+      state: data.state,
+      cardList: data.cardList,
+      currentPlayer: data.currentPlayer
+    })
   }
 }

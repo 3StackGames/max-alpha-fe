@@ -72,6 +72,14 @@ export default class Field extends Component {
   @autobind
   handleCardClick(e, id) {
     const { check, uiActs } = this.props
+
+    if (check.promptExists) {
+      if (check.isTargetable(id)) {
+        uiActs.selectCard(id)
+      }
+      return
+    }
+
     if (
       check.isPhase('Attack Phase')
       && check.isTurn('self')
@@ -82,20 +90,9 @@ export default class Field extends Component {
     if (
       check.isPhase('Block Phase')
       && check.isTurn('opponent')
+      && check.inLocation('self', 'creatures', id)
     ) {
-      if (
-        !check.queueExists
-        && check.inLocation('self', 'creatures', id)
-      ) {
-        uiActs.selectCard(id)
-      }
-
-      if (
-        check.queueExists
-        && check.isTargetable(id)
-      ) {
-        uiActs.selectCard(id)
-      }
+      uiActs.selectCard(id)
     }
   }
 

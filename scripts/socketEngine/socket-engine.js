@@ -10,7 +10,7 @@ const SocketEngine = ({ host, port }) => {
   ws.onopen = () => {
     wsEmitter.emit(internalTypes.CONNECTED)
     ws.onmessage = mapMessageToEvent
-    wsEmitter.on(serverTypes.STATE_UPDATE, handleStateUpdate)
+    // wsEmitter.on(serverTypes.STATE_UPDATE, handleStateUpdate)
   }
 
   const emitToMiddleware = data => {
@@ -24,10 +24,10 @@ const SocketEngine = ({ host, port }) => {
   }
 
   // Default state update handler to enable state engine to emit a change event
-  const handleStateUpdate = data => {
-    const { state, cardList, currentPlayer } = data
-    stateEngine.setState({ state, cardList, currentPlayer })
-  }
+  // const handleStateUpdate = data => {
+  //   const { state, cardList, currentPlayer } = data
+  //   stateEngine.setState({ state, cardList, currentPlayer })
+  // }
 
   const addOnAllMessages = fn => {
     wsEmitter.on(internalTypes.ANY_MESSAGE, fn)

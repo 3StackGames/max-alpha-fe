@@ -43,7 +43,7 @@ export default class ZoomView extends Component {
         </div>
       </div>,
       <div key={2} className='zoom-effects-group group'>
-        <div className='zoom-effect'>Some effects... :)</div>
+        <div className='zoom-effect'>{card.text}</div>
       </div>
     ]
   }

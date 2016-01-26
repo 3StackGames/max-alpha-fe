@@ -5,20 +5,20 @@ import { bindActionCreators } from 'redux'
 import * as gameActs from '../ducks/game'
 import * as uiActs from '../ducks/ui'
 import autobind from 'autobind-decorator'
-import { bindStateDecorator, stateLookups, stateChecks } from '../utils'
+import { stateLookups, stateChecks } from '../utils'
 import { GameBoard } from '../components'
 
 @connect(state => ({
   game: state.game,
   ui: state.ui
 }))
-@bindStateDecorator(engine)
 export default class GamePage extends Component {
   constructor(props) {
     super(props)
 
     this.gameActs = bindActionCreators(gameActs, props.dispatch)
     this.uiActs = bindActionCreators(uiActs, props.dispatch)
+    engine.emitter.on(engine.types.STATE_UPDATE, this.bindState)
     engine.emitter.on(engine.types.PLAYER_PROMPT, this.bindPrompts)
   }
 
@@ -46,12 +46,15 @@ export default class GamePage extends Component {
 
   @autobind
   bindPrompts(data) {
-    console.log('PROMPT UPDATE, YO!')
-    console.log(data)
+    this.gameActs.promptUpdate(data.prompt)
   }
 
   @autobind
-  bindState() {
-    this.gameActs.stateUpdate(engine.getState())
+  bindState(data) {
+    this.gameActs.stateUpdate({
+      state: data.state,
+      cardList: data.cardList,
+      currentPlayer: data.currentPlayer
+    })
   }
 }

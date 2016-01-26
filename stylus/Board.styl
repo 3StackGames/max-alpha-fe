@@ -153,21 +153,24 @@ $hand-height = 90px
   z-index: 2
   position: absolute
   height: 100%
-
-.zoom-body
-  display: flex
-  background: white
   width: 50vw
-  height: 100%
   transform: translateX(-50vw)
   opacity: 0
   transition: all 250ms ease
 
-.zoom-container--zoomed .zoom-body
+.zoom-container--zoomed
   opacity: 1
-  box-shadow 0px 1px 6px 0px rgba(0,0,0,0.1)
   transform: translateX(0)
   transition: all 250ms ease
+
+.zoom-body
+  display: flex
+  background: white
+  height: 100%
+  width: 100%
+  box-shadow 0px 1px 6px 0px rgba(0,0,0,0.1)
+
+// .zoom-container--zoomed .zoom-body
 
 .zoom-info-group,
 .zoom-effects-group

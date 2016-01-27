@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator'
 import Card from './Card'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { DropTarget } from 'react-dnd'
+import { phases } from '../utils'
 
 const target = {
   canDrop(props, monitor) {

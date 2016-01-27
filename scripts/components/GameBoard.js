@@ -244,7 +244,7 @@ export default class GameBoard extends Component {
       }
       return [
         <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + lookup.card(selectedCard).name : 'Select a target'}</div>,
-        <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
+        <div key={1} className='prompt-item'><button onClick={() => this.singleTargetPromptAction()}>TARGET</button></div>
       ]
     }
 
@@ -595,7 +595,7 @@ export default class GameBoard extends Component {
       return (
         <div>
           <p>Targeting: {this.props.lookup.card(selectedCard).name}</p>
-          <button onClick={this.singleTargetPromptAction}>Target</button>
+          <button onClick={() => this.singleTargetPromptAction()}>Target</button>
         </div>
       )
     }

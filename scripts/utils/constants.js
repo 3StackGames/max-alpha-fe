@@ -19,7 +19,7 @@ export const actions = {
           BUILD_STRUCTURE: 'Build Structure',
               ASSIGN_CARD: 'Assign Card',
                 PULL_CARD: 'Pull Card',
-         DECLARE_ATTACKER: 'DECLARE_ATTACKER',
+         DECLARE_ATTACKER: 'Declare Attacker',
           DECLARE_BLOCKER: 'Declare Blocker',
             PROMPT_TARGET: 'Prompt Target',
      CHOOSE_PROMPT_TARGET: 'Choose Prompt Target',

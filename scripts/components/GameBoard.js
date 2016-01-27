@@ -386,7 +386,7 @@ export default class GameBoard extends Component {
       gameCode: this.props.game.gameCode,
       action: {
         playerId: this.currentPlayerId,
-        type: 'ASSIGN_CARD',
+        type: 'Assign Card',
         cardId: this.props.ui.selectedCard
       }
     })
@@ -398,11 +398,11 @@ export default class GameBoard extends Component {
     let playType
 
     if (this.props.check.inLocation('self', 'hand', selectedCard)) {
-      playType = 'PLAY_CARD'
+      playType = 'Play Card'
     }
 
     if (this.props.check.inLocation('self', 'structures', selectedCard)) {
-      playType = 'BUILD_STRUCTURE'
+      playType = 'Build Structure'
     }
 
     this.props.engine.send({
@@ -424,7 +424,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'PULL_CARD',
+        type: 'Pull Card',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }
@@ -437,7 +437,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'DECLARE_ATTACKER',
+        type: 'Declare Attacker',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }
@@ -449,7 +449,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'DECLARE_BLOCKER',
+        type: 'Declare Blocker',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }
@@ -461,7 +461,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'PROMPT_TARGET',
+        type: 'Prompt Target',
         playerId: this.currentPlayerId,
         cardId: id || this.props.ui.selectedCard
       }
@@ -474,7 +474,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'CHOOSE_PROMPT_TARGET',
+        type: 'Choose Prompt Target',
         playerId: this.currentPlayerId,
         cardId: id || this.props.ui.selectedCard
       }
@@ -487,7 +487,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'FINISH_PHASE',
+        type: 'Finish Phase',
         playerId: this.currentPlayerId
       }
     })
@@ -499,7 +499,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'END_TURN_WITHOUT_COMBAT',
+        type: 'End Turn Without Combat',
         playerId: this.currentPlayerId
       }
     })
@@ -511,7 +511,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'DECLARE_ATTACKER',
+        type: 'Declare Attacker',
         playerId: this.currentPlayerId,
         cardId: attackerId,
         targetId: targetId
@@ -524,7 +524,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'DECLARE_BLOCKER',
+        type: 'Declare Blocker',
         playerId: this.currentPlayerId,
         cardId: blockerId,
         targetId: targetId

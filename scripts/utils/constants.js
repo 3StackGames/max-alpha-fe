@@ -9,7 +9,20 @@ export const keys = {
 }
 
 export const phases = {
-  MAIN: 'MAIN_PHASE',
+    MAIN: 'MAIN_PHASE',
   ATTACK: 'ATTACK_PHASE',
-  BLOCK: 'BLOCK_PHASE'
+   BLOCK: 'BLOCK_PHASE'
+}
+
+export const actions = {
+                PLAY_CARD: 'Play Card',
+          BUILD_STRUCTURE: 'Build Structure',
+              ASSIGN_CARD: 'Assign Card',
+                PULL_CARD: 'Pull Card',
+         DECLARE_ATTACKER: 'DECLARE_ATTACKER',
+          DECLARE_BLOCKER: 'Declare Blocker',
+            PROMPT_TARGET: 'Prompt Target',
+     CHOOSE_PROMPT_TARGET: 'Choose Prompt Target',
+             FINISH_PHASE: 'Finish Phase',
+  END_TURN_WITHOUT_COMBAT: 'End Turn Without Combat'
 }

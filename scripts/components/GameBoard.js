@@ -229,9 +229,19 @@ export default class GameBoard extends Component {
       return
     }
 
-    console.log(check.promptExists)
-
     if (check.promptExists) {
+
+      const selectOption = index => {
+        // this.props.uiActs.selectCard(this.props.game.prompt.options[index].id)
+        this.singleTargetPromptAction(this.props.game.prompt.options[index].id)
+      }
+
+      if (this.props.game.prompt.type === 'ChoosePrompt') {
+        return [
+          <div key={0} className='prompt-item'><button onClick={() => selectOption(0)}>{this.props.game.prompt.options[0].name}</button></div>,
+          <div key={1} className='prompt-item'><button onClick={() => selectOption(1)}>{this.props.game.prompt.options[1].name}</button></div>
+        ]
+      }
       return [
         <div key={0} className='prompt-item'>{selectedCard ? 'Selected: ' + lookup.card(selectedCard).name : 'Select a target'}</div>,
         <div key={1} className='prompt-item'><button onClick={this.singleTargetPromptAction}>TARGET</button></div>
@@ -446,12 +456,25 @@ export default class GameBoard extends Component {
     })
   }
 
-  singleTargetPromptAction() {
+  singleTargetPromptAction(id) {
     this.props.engine.send({
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
         type: 'Single Target Prompt',
+        playerId: this.currentPlayerId,
+        cardId: id || this.props.ui.selectedCard
+      }
+    })
+    this.props.uiActs.selectCard(null)
+  }
+
+  choosePromptAction() {
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: 'Choose Prompt',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }

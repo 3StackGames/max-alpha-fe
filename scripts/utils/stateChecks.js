@@ -21,10 +21,14 @@ const inLocation = game => (target, location, findId) =>
 const promptExists = game =>
   game.prompt
 
-const isTargetable = game => id =>
+const currentPromptStep = game =>
   promptExists(game)
   && game.prompt
-       .steps[game.prompt.currentStep]
+      .steps[game.prompt.currentStep]
+
+const isTargetable = game => id =>
+  promptExists(game)
+  && currentPromptStep(game)
        .targetableIds.find(targetId => targetId === id)
 
 const stateChecks = game => ({
@@ -32,6 +36,7 @@ const stateChecks = game => ({
   isTurn: isTurn(game),
   inLocation: inLocation(game),
   promptExists: promptExists(game),
+  currentPromptStep: currentPromptStep(game),
   isTargetable: isTargetable(game)
 })
 

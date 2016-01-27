@@ -1,7 +1,7 @@
 import stateLookups from './stateLookups'
 
 const isPhase = game => name =>
-  game.state.currentPhase.name === name
+  game.state.currentPhase.type === name
 
 const isTurn = game => target => {
   const currentTurn = game.state.turn
@@ -19,12 +19,12 @@ const inLocation = game => (target, location, findId) =>
   stateLookups(game)[target][location]().find(id => id === findId)
 
 const promptExists = game =>
-  game.prompt
+  game.state.prompt
 
 const currentPromptStep = game =>
   promptExists(game)
-  && game.prompt
-      .steps[game.prompt.currentStep]
+  && game.state.prompt
+      .steps[game.state.prompt.currentStep]
 
 const isTargetable = game => id =>
   promptExists(game)

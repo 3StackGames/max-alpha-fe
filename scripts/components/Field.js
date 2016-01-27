@@ -81,14 +81,14 @@ export default class Field extends Component {
     }
 
     if (
-      check.isPhase('Attack Phase')
+      check.isPhase(phases.ATTACK)
       && check.isTurn('self')
     ) {
       uiActs.selectCard(id)
     }
 
     if (
-      check.isPhase('Block Phase')
+      check.isPhase(phases.BLOCK)
       && check.isTurn('opponent')
       && check.inLocation('self', 'creatures', id)
     ) {

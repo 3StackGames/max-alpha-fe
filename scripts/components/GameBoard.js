@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
+import { phases } from '../utils'
 import {
   Hand,
   Card,
@@ -90,7 +91,7 @@ export default class GameBoard extends Component {
             lookup={this.props.lookup} />
           <div className='phase-container'>
             <div className='currentphase-group group'>
-              {this.props.game.state.currentPhase.name}
+              {this.props.game.state.currentPhase.type}
             </div>
             <div className='endphase-group group'>
               {this.endPhaseNode}
@@ -232,14 +233,13 @@ export default class GameBoard extends Component {
     if (check.promptExists) {
 
       const selectOption = index => {
-        // this.props.uiActs.selectCard(this.props.game.prompt.options[index].id)
-        this.singleTargetPromptAction(this.props.game.prompt.options[index].id)
+        this.choosePromptAction(check.currentPromptStep.choices[index].id)
       }
 
-      if (this.props.game.prompt.type === 'ChoosePrompt') {
+      if (this.props.game.state.prompt.type === 'ChoosePrompt') {
         return [
-          <div key={0} className='prompt-item'><button onClick={() => selectOption(0)}>{this.props.game.prompt.options[0].name}</button></div>,
-          <div key={1} className='prompt-item'><button onClick={() => selectOption(1)}>{this.props.game.prompt.options[1].name}</button></div>
+          <div key={0} className='prompt-item'><button onClick={() => selectOption(0)}>{check.currentPromptStep.choices[0].name}</button></div>,
+          <div key={1} className='prompt-item'><button onClick={() => selectOption(1)}>{check.currentPromptStep.choices[1].name}</button></div>
         ]
       }
       return [
@@ -284,11 +284,11 @@ export default class GameBoard extends Component {
     }
 
     if (check.inLocation('self', 'creatures', selectedCard)) {
-      if (check.isPhase('Attack Phase') && check.isTurn('self')) {
+      if (check.isPhase(phases.ATTACK) && check.isTurn('self')) {
         return this.buildPromptButtons(this.attackButton)
       }
 
-      if (check.isPhase('Block Phase') && this.props.check.isTurn('opponent')) {
+      if (check.isPhase(phases.BLOCK) && this.props.check.isTurn('opponent')) {
         return this.buildPromptButtons(this.blockButton)
       }
     }
@@ -329,7 +329,7 @@ export default class GameBoard extends Component {
 
   get endPhaseNode() {
     if (this.props.check.isTurn('self')) {
-      if (this.props.check.isPhase('Main Phase')) {
+      if (this.props.check.isPhase(phases.MAIN)) {
         if (this.props.game.state.combatEnded) {
           return <button onClick={this.finishPhaseAction}>END TURN</button>
         }
@@ -339,7 +339,7 @@ export default class GameBoard extends Component {
         ]
       }
 
-      if (this.props.check.isPhase('Attack Phase')) {
+      if (this.props.check.isPhase(phases.ATTACK)) {
         return [
           <button key={0} onClick={this.finishPhaseAction}>Launch Attack</button>
         ]
@@ -347,7 +347,7 @@ export default class GameBoard extends Component {
     }
 
     if (this.props.check.isTurn('opponent')) {
-      if (this.props.check.isPhase('Block Phase')) {
+      if (this.props.check.isPhase(phases.BLOCK)) {
         return (
           <button
             onClick={this.finishPhaseAction}>
@@ -386,7 +386,7 @@ export default class GameBoard extends Component {
       gameCode: this.props.game.gameCode,
       action: {
         playerId: this.currentPlayerId,
-        type: "Assign Card",
+        type: 'ASSIGN_CARD',
         cardId: this.props.ui.selectedCard
       }
     })
@@ -398,11 +398,11 @@ export default class GameBoard extends Component {
     let playType
 
     if (this.props.check.inLocation('self', 'hand', selectedCard)) {
-      playType = 'Play Card'
+      playType = 'PLAY_CARD'
     }
 
     if (this.props.check.inLocation('self', 'structures', selectedCard)) {
-      playType = 'Build Structure'
+      playType = 'BUILD_STRUCTURE'
     }
 
     this.props.engine.send({
@@ -424,7 +424,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Pull Card',
+        type: 'PULL_CARD',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }
@@ -437,7 +437,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Declare Attacker',
+        type: 'DECLARE_ATTACKER',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }
@@ -449,7 +449,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Declare Blocker',
+        type: 'DECLARE_BLOCKER',
         playerId: this.currentPlayerId,
         cardId: this.props.ui.selectedCard
       }
@@ -461,7 +461,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Single Target Prompt',
+        type: 'PROMPT_TARGET',
         playerId: this.currentPlayerId,
         cardId: id || this.props.ui.selectedCard
       }
@@ -469,14 +469,14 @@ export default class GameBoard extends Component {
     this.props.uiActs.selectCard(null)
   }
 
-  choosePromptAction() {
+  choosePromptAction(id) {
     this.props.engine.send({
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Choose Prompt',
+        type: 'CHOOSE_PROMPT_TARGET',
         playerId: this.currentPlayerId,
-        cardId: this.props.ui.selectedCard
+        cardId: id || this.props.ui.selectedCard
       }
     })
     this.props.uiActs.selectCard(null)
@@ -487,7 +487,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Finish Phase',
+        type: 'FINISH_PHASE',
         playerId: this.currentPlayerId
       }
     })
@@ -499,7 +499,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'End Turn Without Combat',
+        type: 'END_TURN_WITHOUT_COMBAT',
         playerId: this.currentPlayerId
       }
     })
@@ -511,7 +511,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Declare Attacker',
+        type: 'DECLARE_ATTACKER',
         playerId: this.currentPlayerId,
         cardId: attackerId,
         targetId: targetId
@@ -524,7 +524,7 @@ export default class GameBoard extends Component {
       eventType: this.props.engine.types.GAME_ACTION,
       gameCode: this.props.game.gameCode,
       action: {
-        type: 'Declare Blocker',
+        type: 'DECLARE_BLOCKER',
         playerId: this.currentPlayerId,
         cardId: blockerId,
         targetId: targetId
@@ -618,17 +618,17 @@ export default class GameBoard extends Component {
 
   get phaseActionNode() {
     let buttonText = ''
-    const phaseName = this.props.game.state.currentPhase.name
+    const phaseName = this.props.game.state.currentPhase.type
     switch (phaseName) {
-      case 'Main Phase':
+      case phases.MAIN:
         buttonText = this.props.game.state.combatEnded
           ? 'END TURN'
           : 'DECLARE ATTACKERS'
         break
-      case 'Attack Phase':
+      case phases.ATTACK:
         buttonText = 'PREPARE BLOCKERS'
         break
-      case 'Block Phase':
+      case phases.BLOCK:
         buttonText = 'TO MAIN PHASE'
         break
       default:

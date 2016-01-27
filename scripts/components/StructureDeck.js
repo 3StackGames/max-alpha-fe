@@ -1,6 +1,7 @@
 import React, { Component, PropTypes, defaultProps } from 'react'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
+import { phases } from '../utils'
 
 export default class StructureDeck extends Component {
   static propTypes = {
@@ -46,7 +47,7 @@ export default class StructureDeck extends Component {
   handleClick(e, id) {
     const { check, uiActs } = this.props
     if (
-      check.isPhase('Main Phase')
+      check.isPhase(phases.MAIN)
       && check.inLocation('self', 'structures', id)
     ) {
       uiActs.selectCard(id)

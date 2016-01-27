@@ -7,3 +7,9 @@ export const keys = {
       WHITE: 'WHITE',
      YELLOW: 'YELLOW'
 }
+
+export const phases = {
+  MAIN: 'MAIN_PHASE',
+  ATTACK: 'ATTACK_PHASE',
+  BLOCK: 'BLOCK_PHASE'
+}

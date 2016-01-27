@@ -4,6 +4,7 @@ import cx from 'classname'
 import autobind from 'autobind-decorator'
 import WorkerOrb from './WorkerOrb'
 import { DropTarget } from 'react-dnd'
+import { phases } from '../utils'
 
 const target = {
   canDrop(props, monitor) {
@@ -68,7 +69,7 @@ export default class Town extends Component {
 
   @autobind
   handleWorkerClick(e, id) {
-    if (this.props.check.isPhase('Main Phase')) {
+    if (this.props.check.isPhase(phases.MAIN)) {
       this.props.uiActs.selectCard(id)
     }
   }

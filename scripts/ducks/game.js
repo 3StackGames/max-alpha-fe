@@ -7,7 +7,6 @@ const initialState = {
   currentPlayer: null,
   gameCode: null,
   state: {},
-  prompt: null,
   cardList: []
 }
 const reducer = (state = initialState, action) => {
@@ -21,7 +20,10 @@ const reducer = (state = initialState, action) => {
     case PROMPT_UPDATE:
       return {
         ...state,
-        prompt: payload
+        state: {
+          ...state.state,
+          prompt: payload
+        }
       }
     case SET_GAME_CODE:
       return {

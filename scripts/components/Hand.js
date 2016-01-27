@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator'
 import Card from './Card'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { DropTarget } from 'react-dnd'
+import { phases } from '../utils'
 
 const target = {
   canDrop(props, monitor) {
@@ -82,7 +83,7 @@ export default class App extends Component {
   @autobind
   handleCardClick(e, id) {
     if (
-      this.props.check.isPhase('Main Phase')
+      this.props.check.isPhase(phases.MAIN)
       && this.props.check.isTurn('self')
       && this.props.check.inLocation('self', 'hand', id)
     ) {

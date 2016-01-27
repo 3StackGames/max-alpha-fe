@@ -4,7 +4,7 @@ import { DragDropContext } from 'react-dnd'
 import { mount, describeWithDOM } from 'enzyme'
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { stateLookups, stateChecks } from '../scripts/utils'
+import { stateLookups, stateChecks, phases } from '../scripts/utils'
 import { Town, WorkerOrb } from '../scripts/components'
 
 function wrapInTestContext(ComposedComponent) {
@@ -43,7 +43,7 @@ describeWithDOM('<Town/>', () => {
     this.mockGame = {
       state: {
         currentPhase: {
-          name: 'Main Phase'
+          type: phases.MAIN
         }
       }
     }

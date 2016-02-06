@@ -220,10 +220,11 @@ export default class GameBoard extends Component {
 
   get promptNode() {
     const { check, lookup, ui, uiActs } = this.props
-    const { selectedCard, playingCard } = ui
+    const { selectedCard, playingCard, selectedAbility } = ui
 
     if (
       !selectedCard
+      && !selectedAbility
       && !playingCard
       && !check.promptExists
     ) {
@@ -265,6 +266,27 @@ export default class GameBoard extends Component {
         </div>,
         <div key={2} className='prompt-item'>
           <button onClick={this.playAction}>PLAY</button>
+        </div>
+      ]
+    }
+
+    if (selectedAbility) {
+      const colorResources = lookup.self.player().resources.colors
+      return [
+        <div key={0} className='prompt-item'>
+          Cost: (1)(2)(3)
+        </div>,
+        <div key={1} className='prompt-item'>
+          {
+            Object.keys(colorResources)
+              .filter(color => colorResources[color] > 0)
+              .map(color => (
+                <button onClick={() => uiActs.assignCost(color, (ui.cost.colors[color]) + 1)}>{color}: {ui.cost.colors[color]}</button>
+              ))
+          }
+        </div>,
+        <div key={2} className='prompt-item'>
+          <button onClick={this.activateAbilityAction}>ACTIVATE</button>
         </div>
       ]
     }
@@ -480,6 +502,22 @@ export default class GameBoard extends Component {
       }
     })
     this.props.uiActs.selectCard(null)
+  }
+
+  activateAbilityAction() {
+    this.props.engine.send({
+      eventType: this.props.engine.types.GAME_ACTION,
+      gameCode: this.props.game.gameCode,
+      action: {
+        type: actions.ACTIVATE_ABILITY,
+        playerId: this.currentPlayerId,
+        cardId: this.props.ui.selectedAbility.cardId,
+        abilityId: this.props.ui.selectedAbility.id,
+        cost: this.props.ui.cost
+      }
+    })
+    this.props.uiActs.selectCard(null)
+    this.props.uiActs.cancelDeclaration()
   }
 
   finishPhaseAction() {

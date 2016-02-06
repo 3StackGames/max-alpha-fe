@@ -62,10 +62,13 @@ export default class Field extends Component {
           id={card.id}
           zoomState={this.props.ui.zoomedCard === card.id}
           selectState={this.props.ui.selectedCard === card.id}
+          tapState={card.exhausted}
           onCardClick={this.handleCardClick}
           onCardMouseOver={this.handleCardMouseOver}
           onCardMouseOut={this.handleCardMouseOut}
           smoothBlockAction={this.props.smoothBlockAction}
+          selectAbility={this.props.uiActs.selectAbility}
+          player={this.props.player}
           {...card} />
       ))
   }

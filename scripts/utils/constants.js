@@ -23,6 +23,7 @@ export const actions = {
           DECLARE_BLOCKER: 'Declare Blocker',
             PROMPT_TARGET: 'Prompt Target',
      CHOOSE_PROMPT_TARGET: 'Choose Prompt Target',
+         ACTIVATE_ABILITY: 'Activate Ability',
              FINISH_PHASE: 'Finish Phase',
   END_TURN_WITHOUT_COMBAT: 'End Turn Without Combat'
 }

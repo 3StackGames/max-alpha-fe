@@ -8,7 +8,7 @@
     width: 100%
     border: 1px solid $card-border-color
     border-radius: $card-border-radius
-    overflow-y: hidden
+    // overflow-y: hidden
     display: inline-flex
     flex-direction: column
     background-color: white
@@ -32,22 +32,6 @@
   &-wrap-name,
   &-wrap-stats
     margin: 2px
-
-  &-wrap-tags-overlay
-    position: relative
-    height: 60px
-    display: flex
-    justify-content: center
-    align-items: center
-    background-image: url(http://placehold.it/80x60)
-
-  &-overlay-tag
-    text-align: center
-    background-color: $overlay-tag-background
-    color: $overlay-tag-color
-    margin-bottom: 4px
-    padding: 2px 4px
-    border-radius: 2px
 
   &-wrap-stats
     margin-top: auto
@@ -97,3 +81,42 @@
   &-opponent
     .Card-combat-pair
       order: 2
+  
+  &-wrap-tags-overlay
+    position: relative
+    height: 60px
+    display: flex
+    justify-content: center
+    background-image: url(http://placehold.it/80x60)
+    overflow: initial
+
+  &-overlay-tag
+    text-align: center
+    background-color: $overlay-tag-background
+    color: $overlay-tag-color
+    margin-bottom: 4px
+    padding: 2px 4px
+    border-radius: 2px
+  
+  &-abilities-overlay
+    position: absolute
+    top: 0
+    left: 100%
+    width: 100px
+    padding-left: 8px
+    
+  &-ability-item
+    width: 100%
+    font-size: 12px
+    white-space: nowrap
+    text-overflow: ellipsis
+    overflow-x: hidden
+    flex: 1
+    padding: 4px
+    border: 1px solid gray
+    
+    &:hover
+      cursor: pointer
+      border-color: green
+      color: green
+      width: 150%

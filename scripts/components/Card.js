@@ -87,7 +87,7 @@ export default class Card extends Component {
           {props.name}
         </div>
         <div className='Card-wrap-tags-overlay'>
-          {/*{this.tagOverlayNodes}*/}
+          {this.abilitiesOverlay}
         </div>
         <div className='Card-wrap-stats'>
           <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
@@ -126,6 +126,32 @@ export default class Card extends Component {
     }
   }
 
+  get abilitiesOverlay() {
+    const { abilities } = this.props
+    if (
+      !abilities
+      || abilities.length === 0
+      || this.props.player === 'opponent'
+      || this.props.type !== 'field'
+    ) return
+
+    const abilityNodes = abilities.map(ab => {
+      return <div
+        key={ab.id}
+        className='Card-ability-item'
+        onClick={() => this.props.selectAbility({
+          ...ab,
+          cardId: this.props.id
+        })}>
+        {ab.text}
+      </div>
+    })
+
+    return <div className='Card-abilities-overlay'>
+      {abilityNodes}
+    </div>
+  }
+
   // get actions() {
   //   return (
   //     <div className={cx('Card-actions-wrap', {
@@ -153,28 +179,28 @@ export default class Card extends Component {
   }
 
   // Need to remake with the game state
-  get tagOverlayNodes() {
-    const { tags } = this.props.description
-    // get only the first two tags
-    const tagKeyNodes = R.take(2, tags)
-      .map((tag, i) => {
-        return (
-          <div key={i} className='Card-overlay-tag'>
-            <TagKey condition={tag.condition} />
-          </div>
-        )
-      })
-    return (
-      <div className='Card-tags-overlay'>
-        {tagKeyNodes}
-        {
-          tags.length > 2
-            ? <div style={{textAlign: 'center'}}>...</div>
-            : null
-        }
-      </div>
-    )
-  }
+  // get tagOverlayNodes() {
+  //   const { tags } = this.props.abilities
+  //   // get only the first two tags
+  //   const tagKeyNodes = R.take(2, tags)
+  //     .map((tag, i) => {
+  //       return (
+  //         <div key={i} className='Card-overlay-tag'>
+  //           <TagKey condition={tag.condition} />
+  //         </div>
+  //       )
+  //     })
+  //   return (
+  //     <div className='Card-tags-overlay'>
+  //       {tagKeyNodes}
+  //       {
+  //         tags.length > 2
+  //           ? <div style={{textAlign: 'center'}}>...</div>
+  //           : null
+  //       }
+  //     </div>
+  //   )
+  // }
 
   get combatPairNode() {
     return (

@@ -6,6 +6,7 @@ const DECLARE_PLAY_CARD = 'max-alpha/ui/DECLARE_PLAY_CARD'
 const ASSIGN_COST = 'max-alpha/ui/ASSIGN_COST'
 const ASSIGN_TARGET = 'max-alpha/ui/ASSIGN_TARGET'
 const CANCEL_DECLARATION = 'max-alpha/ui/CANCEL_DECLARATION'
+const SELECT_ABILITY = 'max-alpha/ui/SELECT_ABILITY'
 
 const initialColors = {
   COLORLESS: 0,
@@ -22,6 +23,7 @@ const initialState = {
   zoomedCard: null,
   playingCard: null,
   targetCard: null,
+  selectedAbility: null,
   cost: {
     colors: initialColors
   }
@@ -77,6 +79,11 @@ const reducer = (state = initialState, action) => {
           colors: initialColors
         }
       }
+    case SELECT_ABILITY:
+      return {
+        ...state,
+        selectedAbility: payload
+      }
     default:
       return state
   }
@@ -125,5 +132,10 @@ export const cancelDeclaration = () => {
     type: CANCEL_DECLARATION
   }
 }
+
+export const selectAbility = ability => ({
+  type: SELECT_ABILITY,
+  payload: ability
+})
 
 export default reducer

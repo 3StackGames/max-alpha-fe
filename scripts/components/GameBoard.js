@@ -291,6 +291,25 @@ export default class GameBoard extends Component {
       ]
     }
 
+    if (
+      selectedCard
+      && check.isPhase(phases.MAIN)
+      && check.inLocation('self', 'creatures', selectedCard)
+    ) {
+      const card = lookup.card(selectedCard)
+      return card.abilities.map(ab => (
+        <div
+          key={ab.id}
+          className='prompt-item'
+          onClick={() => uiActs.selectAbility({
+            ...ab,
+            cardId: card.id
+          })}>
+          <button>{ab.text}</button>
+        </div>
+      ))
+    }
+
     const { hasAssignedOrPulled } = lookup.self.player
 
     if (check.inLocation('self', 'hand', selectedCard)) {
@@ -517,7 +536,7 @@ export default class GameBoard extends Component {
       }
     })
     this.props.uiActs.selectCard(null)
-    this.props.uiActs.cancelDeclaration()
+    this.props.uiActs.selectAbility(null)
   }
 
   finishPhaseAction() {
@@ -530,6 +549,7 @@ export default class GameBoard extends Component {
       }
     })
     this.props.uiActs.selectCard(null)
+    this.props.uiActs.selectAbility(null)
   }
 
   endTurnWithoutCombatAction() {
@@ -542,6 +562,7 @@ export default class GameBoard extends Component {
       }
     })
     this.props.uiActs.selectCard(null)
+    this.props.uiActs.selectAbility(null)
   }
 
   smoothAttackAction(attackerId, targetId) {

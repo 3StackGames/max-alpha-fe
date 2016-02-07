@@ -85,6 +85,13 @@ export default class Field extends Component {
     }
 
     if (
+      check.isPhase(phases.MAIN)
+      && check.isTurn('self')
+    ) {
+      uiActs.selectCard(id)
+    }
+
+    if (
       check.isPhase(phases.ATTACK)
       && check.isTurn('self')
     ) {

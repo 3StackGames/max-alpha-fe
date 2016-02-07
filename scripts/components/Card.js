@@ -86,9 +86,7 @@ export default class Card extends Component {
         <div className='Card-wrap-name'>
           {props.name}
         </div>
-        <div className='Card-wrap-tags-overlay'>
-          {this.abilitiesOverlay}
-        </div>
+        <div className='Card-wrap-tags-overlay'/>
         <div className='Card-wrap-stats'>
           <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
           <span className='Card-stat'><label>HP:</label> {props.currentHealth}</span>
@@ -124,32 +122,6 @@ export default class Card extends Component {
     if (this.props.onCardMouseOut) {
       this.props.onCardMouseOut(e, this.props.id)
     }
-  }
-
-  get abilitiesOverlay() {
-    const { abilities } = this.props
-    if (
-      !abilities
-      || abilities.length === 0
-      || this.props.player === 'opponent'
-      || this.props.type !== 'field'
-    ) return
-
-    const abilityNodes = abilities.map(ab => {
-      return <div
-        key={ab.id}
-        className='Card-ability-item'
-        onClick={() => this.props.selectAbility({
-          ...ab,
-          cardId: this.props.id
-        })}>
-        {ab.text}
-      </div>
-    })
-
-    return <div className='Card-abilities-overlay'>
-      {abilityNodes}
-    </div>
   }
 
   // get actions() {

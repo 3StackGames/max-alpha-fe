@@ -1,6 +1,6 @@
 import React, { Component, PropTypes, defaultProps } from 'react'
-import cx from 'classname'
 import autobind from 'autobind-decorator'
+import { Orb } from '.'
 
 import { DragSource } from 'react-dnd'
 const WORKER = 'WORKER'
@@ -21,18 +21,23 @@ const workerConnect = (connect, monitor) => ({
 export default class WorkerOrb extends Component {
   render() {
     return this.props.connectDragSource(
-      <span
-        className={cx(
-          'WorkerOrb',
-          'ResourceOrb',
-          `ResourceOrb-${this.props.color}`, {
-          'WorkerOrb--zoom': this.props.zoomState,
-          'WorkerOrb--select': this.props.selectState
-        })}
-        onClick={this.handleClick}
-        onMouseOver={this.handleMouseOver}
-        onMouseOut={this.handleMouseOut} />
+      <span>
+        <Orb
+          type='worker'
+          status={this.orbStatus}
+          color={this.props.color}
+          interactable={true}
+          onClick={this.handleClick}
+          onMouseOver={this.handleMouseOver}
+          onMouseOut={this.handleMouseOut} />
+      </span>
     )
+  }
+
+  get orbStatus() {
+    if (this.props.selectState) return 'selected'
+    if (this.props.zoomState) return 'loud'
+    return 'normal'
   }
 
   @autobind

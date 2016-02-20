@@ -16,7 +16,8 @@ import {
   MainDeck,
   Grave,
   ResourceIndicator,
-  ZoomView
+  ZoomView,
+  PromptWidget
 } from '.'
 
 @autobind
@@ -87,18 +88,31 @@ export default class GameBoard extends Component {
         </div>
         <div className='actions-container'>
           <ZoomView
-            ui={this.props.ui}
-            lookup={this.props.lookup} />
+            ui={props.ui}
+            lookup={props.lookup} />
           <div className='phase-container'>
             <div className='currentphase-group group'>
-              {this.props.game.state.currentPhase.type}
+              {props.game.state.currentPhase.type}
             </div>
             <div className='endphase-group group'>
               {this.endPhaseNode}
             </div>
           </div>
           <div className='prompt-container'>
-            {this.promptNode}
+            <PromptWidget
+              check={props.check}
+              lookup={props.lookup}
+              ui={props.ui}
+              uiActs={props.uiActs}
+              assignAction={this.assignAction}
+              pullAction={this.pullAction}
+              playAction={this.playAction}
+              choosePromptAction={this.choosePromptAction}
+              singleTargetPromptAction={this.singleTargetPromptAction}
+              activateAbilityAction={this.activateAbilityAction}
+              UIPlayAction={this.UIPlayAction}
+              UIAttackAction={this.UIAttackAction}
+              UIBlockAction={this.UIBlockAction} />
           </div>
           <div className='castles-container'>
             <Castle

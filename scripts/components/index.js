@@ -14,6 +14,10 @@ import MainDeck from './MainDeck'
 import Grave from './Grave'
 import ResourceIndicator from './ResourceIndicator'
 import ZoomView from './ZoomView'
+import PromptWidget from './PromptWidget'
+import PlayCostWidget from './PlayCostWidget'
+import SelectCostWidget from './SelectCostWidget'
+import Orb from './Orb'
 
 export {
   GameBoard,
@@ -31,5 +35,9 @@ export {
   MainDeck,
   Grave,
   ResourceIndicator,
-  ZoomView
+  ZoomView,
+  PromptWidget,
+  PlayCostWidget,
+  SelectCostWidget,
+  Orb
 }

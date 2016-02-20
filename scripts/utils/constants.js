@@ -1,4 +1,4 @@
-export const keys = {
+export const colors = {
       BLACK: 'BLACK',
        BLUE: 'BLUE',
   COLORLESS: 'COLORLESS',

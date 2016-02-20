@@ -1,0 +1,108 @@
+setVisibleTextColor(background)
+  if light(background)
+    color: black
+  else
+    color: white
+
+.Orb
+  display: inline-block
+  width: 25px
+  height: 25px
+  margin-right: 3px
+  border: 1px solid
+  border-radius: 100px
+  font-size: 20px
+  line-height: 25px
+  display: flex
+  justify-content: center
+  align-items: center
+  transition: transform 250ms ease
+  
+  &-colorless
+    background-color: $mana-colorless
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+
+  &-white
+    background-color: $mana-white
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+
+  &-blue
+    background-color: $mana-blue
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+  
+  &-yellow
+    background-color: $mana-yellow
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+  
+  &-green
+    background-color: $mana-green
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+  
+  &-red
+    background-color: $mana-red
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+  
+  &-black
+    background-color: $mana-black
+    border-color: darken(@background-color, 30%)
+    setVisibleTextColor(@background-color)
+
+.Orb-worker
+  &.Orb--loud
+    transform: scale(1.2)
+
+  &.Orb--selected
+    transform: scale(1.5)
+
+.Orb-resource
+  &.Orb--quiet
+    opacity: 0.2
+
+.Orb-costSelector
+  &.Orb--quiet
+    transform: scale(0.5)
+
+.ResourceOrb
+  display: inline-block
+  width: 25px
+  height: 25px
+  margin-right: 3px
+  border: 1px solid
+  border-radius: 100px
+  font-size: 20px
+  line-height: 25px
+  text-align: center
+  vertical-align: middle
+  
+  &--empty
+    opacity: 0.2
+
+.PromptWidget
+  height: 100%
+  transition: all 250ms ease
+  background: #fafafa
+  display: flex
+  flex-direction: column
+  justify-content: space-around
+  align-items: center
+  padding: 8px 0
+
+.PlayCostWidget
+  display: flex
+  justify-content: center
+  align-items: center
+
+.PlayCostWidget-label
+  text-transform: uppercase
+  font-size: 12px
+  margin-right: 8px
+  
+.PlayCostWidget-selection-group
+  display: flex
+  justify-content: center

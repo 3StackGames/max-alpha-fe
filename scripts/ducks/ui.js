@@ -114,8 +114,8 @@ export const assignCost = (color, value) => {
   return {
     type: ASSIGN_COST,
     payload: {
-      value,
-      color: color
+      color,
+      value
     }
   }
 }

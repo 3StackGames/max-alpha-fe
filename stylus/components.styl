@@ -64,9 +64,28 @@ setVisibleTextColor(background)
   &.Orb--quiet
     opacity: 0.2
 
+costSelectorShadow(color)
+  box-shadow 0px 5px 10px -3px color
+$grayscale-shadow-color = transparentify(black, 0.4)
 .Orb-costSelector
+  transition: all 250ms ease
+  &.Orb--normal
+    &.Orb-colorless
+      costSelectorShadow($grayscale-shadow-color)
+    &.Orb-white
+      costSelectorShadow($grayscale-shadow-color)
+    &.Orb-blue
+      costSelectorShadow($mana-blue)
+    &.Orb-yellow
+      costSelectorShadow($mana-yellow)
+    &.Orb-green
+      costSelectorShadow($mana-green)
+    &.Orb-red
+      costSelectorShadow($mana-red)
+    &.Orb-black
+      costSelectorShadow($grayscale-shadow-color)
   &.Orb--quiet
-    transform: scale(0.5)
+    box-shadow: none
 
 .ResourceOrb
   display: inline-block

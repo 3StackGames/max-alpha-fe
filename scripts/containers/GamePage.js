@@ -46,7 +46,7 @@ export default class GamePage extends Component {
 
   @autobind
   bindPrompts(data) {
-    this.gameActs.promptUpdate(data.promptStep)
+    this.gameActs.promptUpdate(data.prompt)
   }
 
   @autobind

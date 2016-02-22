@@ -234,13 +234,13 @@ export default class GameBoard extends Component {
     if (check.promptExists) {
 
       const selectOption = index => {
-        this.choosePromptAction(check.currentPrompt.choices[index].id)
+        this.choosePromptAction(check.currentPrompt.options[index].id)
       }
 
       if (check.currentPrompt.type === 'CHOOSE') {
         return [
-          <div key={0} className='prompt-item'><button onClick={() => selectOption(0)}>{check.currentPrompt.choices[0].name}</button></div>,
-          <div key={1} className='prompt-item'><button onClick={() => selectOption(1)}>{check.currentPrompt.choices[1].name}</button></div>
+          <div key={0} className='prompt-item'><button onClick={() => selectOption(0)}>{check.currentPrompt.options[0].name}</button></div>,
+          <div key={1} className='prompt-item'><button onClick={() => selectOption(1)}>{check.currentPrompt.options[1].name}</button></div>
         ]
       }
       return [

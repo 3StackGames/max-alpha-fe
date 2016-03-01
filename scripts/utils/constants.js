@@ -11,7 +11,8 @@ export const keys = {
 export const phases = {
     MAIN: 'MAIN_PHASE',
   ATTACK: 'ATTACK_PHASE',
-   BLOCK: 'BLOCK_PHASE'
+   BLOCK: 'BLOCK_PHASE',
+   PREP: 'PREPARATION_PHASE'
 }
 
 export const actions = {

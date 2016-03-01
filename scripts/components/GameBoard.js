@@ -397,6 +397,15 @@ export default class GameBoard extends Component {
         )
       }
     }
+
+    if (
+      this.props.check.isPhase(phases.PREP)
+      && !this.props.lookup.self.player().preparationDone
+    ) {
+      return <button onClick={this.finishPhaseAction}>
+        Finish Preparation
+      </button>
+    }
   }
 
   get currentPlayerId() {

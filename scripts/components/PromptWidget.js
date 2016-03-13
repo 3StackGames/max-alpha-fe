@@ -107,6 +107,7 @@ export default class PromptWidget extends Component {
       selectedCard
       && check.isPhase(phases.MAIN)
       && check.inLocation('self', 'creatures', selectedCard)
+         || check.inLocation('self', 'courtyard', selectedCard)
     ) {
       const card = lookup.card(selectedCard)
       return card.abilities.map(ab => (

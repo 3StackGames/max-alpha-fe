@@ -40,9 +40,7 @@ export default class Courtyard extends Component {
 
   @autobind
   handleClick(e, id) {
-    if (this.props.check.isTargetable(id)) {
-      this.props.uiActs.selectedCard(id)
-    }
+    this.props.uiActs.selectCard(id)
   }
 
   @autobind

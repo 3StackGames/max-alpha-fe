@@ -21,17 +21,12 @@ const target = {
 }
 
 const collect = (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget()
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver()
 })
 
 @DropTarget('WORKER', target, collect)
 export default class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      selecting: {}
-    }
-  }
 
   static propTypes = {
     lookup: PropTypes.object.isRequired,
@@ -45,7 +40,9 @@ export default class App extends Component {
 
   render() {
     return this.props.connectDropTarget(
-      <div className='hand-container'>
+      <div className={cx('hand-container', 'droppable-area', {
+        'droppable-area--over': this.props.isOver
+      })}>
         <ReactCSSTransitionGroup
           component='div'
           className='Hand'

@@ -19,7 +19,8 @@ const target = {
 }
 
 const collect = (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget()
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver()
 })
 
 @DropTarget('CARD', target, collect)
@@ -36,10 +37,12 @@ export default class Town extends Component {
 
   render() {
     return this.props.connectDropTarget(
-      <div className='town-container'>
+      <div className={cx('town-container', 'droppable-area', {
+        'droppable-area--over': this.props.isOver
+      })}>
         <ReactCSSTransitionGroup
           component='div'
-          className='town-body'
+          className={'town-body'}
           transitionName='town-resource'
           transitionEnterTimeout={250}
           transitionLeaveTimeout={250}>

@@ -18,7 +18,8 @@ const target = {
 }
 
 const dropCollect = (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget()
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver()
 })
 
 @DropTarget('CARD', target, dropCollect)
@@ -37,8 +38,9 @@ export default class Castle extends Component {
     const { castle } = this.props.lookup[this.props.player].player()
     return this.props.connectDropTarget(
       <div
-        className={cx('castle-body', {
-          'castle-body--selected': this.props.ui.selectedCard === castle.id
+        className={cx('castle-body', 'droppable-area', {
+          'castle-body--selected': this.props.ui.selectedCard === castle.id,
+          'droppable-area--over': this.props.isOver
         })}
         onClick={e => this.handleCastleClick(e, castle.id)}>
         {castle.currentHealth}

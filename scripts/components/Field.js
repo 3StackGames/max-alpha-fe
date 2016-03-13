@@ -21,7 +21,8 @@ const target = {
 }
 
 const collect = (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget()
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver()
 })
 
 @DropTarget(['CARD', 'STRUCTURE'], target, collect)
@@ -37,7 +38,9 @@ export default class Field extends Component {
 
   render() {
     return this.props.connectDropTarget(
-      <div className='field-container'>
+      <div className={cx('field-container', 'droppable-area', {
+        'droppable-area--over': this.props.isOver
+      })}>
         <ReactCSSTransitionGroup
           component='div'
           className='field-body'

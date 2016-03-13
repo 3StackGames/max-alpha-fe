@@ -88,7 +88,7 @@ export default class Card extends Component {
         </div>
         <div className='Card-wrap-tags-overlay'/>
         <div className='Card-wrap-stats'>
-          <span className='Card-stat'><label>ATK:</label> {props.attack}</span>
+          <span className='Card-stat'><label>ATK:</label> {props.currentAttack}</span>
           <span className='Card-stat'><label>HP:</label> {props.currentHealth}</span>
         </div>
       </div>

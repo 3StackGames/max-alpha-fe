@@ -38,7 +38,7 @@ export default class ZoomView extends Component {
         <div className='zoom-name'>{card.name}</div>
         <div className='zoom-cost'>{costNodes}</div>
         <div className='zoom-stats-group group'>
-          <div className='zoom-attack'>ATK: {card.attack || 0}</div>
+          <div className='zoom-attack'>ATK: {card.currentAttack || 0}</div>
           <div className='zoom-health'>HP: {card.currentHealth}/{card.health}</div>
         </div>
       </div>,

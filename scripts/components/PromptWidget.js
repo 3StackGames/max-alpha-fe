@@ -83,18 +83,19 @@ export default class PromptWidget extends Component {
 
     if (selectedAbility) {
       const colorResources = lookup.self.player().resources.colors
+      const currentCost = selectedAbility.cost
       return [
         <div key={0} className='prompt-item'>
-          Cost: (1)(2)(3)
+          <PlayCostWidget
+            cost={currentCost}
+            paidCost={ui.cost} />
         </div>,
         <div key={1} className='prompt-item'>
-          {
-            Object.keys(colorResources)
-              .filter(color => colorResources[color] > 0)
-              .map(color => (
-                <button onClick={() => uiActs.assignCost(color, (ui.cost.colors[color]) + 1)}>{color}: {ui.cost.colors[color]}</button>
-              ))
-          }
+          <SelectCostWidget
+            cost={currentCost}
+            paidCost={ui.cost}
+            colorResources={colorResources}
+            assignCost={uiActs.assignCost} />
         </div>,
         <div key={2} className='prompt-item'>
           <button onClick={this.props.activateAbilityAction}>ACTIVATE</button>

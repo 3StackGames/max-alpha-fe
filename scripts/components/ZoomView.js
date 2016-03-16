@@ -47,8 +47,8 @@ export default class ZoomView extends Component {
         </div>
       </div>,
       <div key={2} className='zoom-effects-group group'>
-        {card.tags.map(tag => (<div key={tag.type} className='zoom-effect'>{tag.type}</div>))}
-        {card.classes.map(c => (<div key={c} className='zoom-effect'>{c}</div>))}
+        {card.tags && card.tags.map(tag => (<div key={tag.type} className='zoom-effect'>{tag.type}</div>))}
+        {card.classes && card.classes.map(c => (<div key={c} className='zoom-effect'>{c}</div>))}
         <div className='zoom-effect'>{card.text}</div>
       </div>
     ]

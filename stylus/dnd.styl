@@ -3,9 +3,28 @@
   100% { background-color: #FFFDDA }
 }
 
-.droppable-area--over
-  animation-name background-pulse
+@keyframes levitate {
+  0% { trasform: translateY(0) }
+  100% { transform: translateY(-2px) }
+}
+
+.droppable-area
+  border: 1px solid rgba(255,255,255,0)
+  transition: all 400ms ease
+
+.droppable-area--attackable
+  transition: all 250ms ease
+  box-shadow: 0px 0px 12px 0px transparentify(red, 0.2)
+  border-color: red
+  animation-name levitate
   animation-iteration-count: infinite
   animation-timing-function: ease
-  animation-duration: 2s
+  animation-duration: 1s
   animation-direction: alternate
+  
+  &.droppable-area--over
+    background-color: transparentify(red, 0.2)
+
+.droppable-area--over
+  transition: all 250ms ease
+  background-color: #FFFDDA

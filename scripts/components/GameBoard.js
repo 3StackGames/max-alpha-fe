@@ -235,7 +235,7 @@ export default class GameBoard extends Component {
   get endPhaseNode() {
     if (this.props.check.isTurn('self')) {
       if (this.props.check.isPhase(phases.MAIN)) {
-        if (this.props.game.state.combatEnded) {
+        if (this.props.game.state.currentPhase.combatEnded) {
           return <button onClick={this.finishPhaseAction}>END TURN</button>
         }
         return [

@@ -14,7 +14,8 @@ const FaceDownCard = ({
     className={cx('FaceDownCard', {
       'FaceDownCard-deck': type === 'deck',
       'FaceDownCard-hand': type === 'hand'
-    })}>
+    })}
+    data-card-id={id}>
   </div>
 )
 

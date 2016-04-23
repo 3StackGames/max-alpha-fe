@@ -1,8 +1,8 @@
 import React, { Component, PropTypes, defaultProps } from 'react'
 import cx from 'classname'
 import autobind from 'autobind-decorator'
-
 import { DropTarget } from 'react-dnd'
+import { phases } from '../utils'
 
 const target = {
   canDrop(props, monitor, component) {
@@ -22,6 +22,7 @@ const dropCollect = (connect, monitor) => ({
   isOver: monitor.isOver()
 })
 
+
 @DropTarget('CARD', target, dropCollect)
 export default class Castle extends Component {
   static propTypes = {
@@ -35,15 +36,16 @@ export default class Castle extends Component {
   };
 
   render() {
-    const { castle } = this.props.lookup[this.props.player].player()
     return this.props.connectDropTarget(
       <div
         className={cx('castle-body', 'droppable-area', {
-          'castle-body--selected': this.props.ui.selectedCard === castle.id,
-          'droppable-area--over': this.props.isOver
+          'castle-body--selected': this.props.ui.selectedCard === this.castle.id,
+          'droppable-area--over': this.props.isOver,
+          'droppable-area--attackable': this.isAttackable
         })}
-        onClick={e => this.handleCastleClick(e, castle.id)}>
-        {castle.currentHealth}
+        data-card-id={this.castle.id}
+        onClick={e => this.handleCastleClick(e, this.castle.id)}>
+        {this.castle.currentHealth}
       </div>
     )
   }
@@ -52,5 +54,17 @@ export default class Castle extends Component {
     if (this.props.check.isTargetable(id)) {
       this.props.uiActs.selectCard(id)
     }
+  }
+
+  get castle() {
+    return this.props.lookup[this.props.player].player().castle
+  }
+
+  get isAttackable() {
+    const { zoomedCard } = this.props.ui
+    if (!zoomedCard) return false
+
+    const { attackableStructureIds } = this.props.lookup.card(zoomedCard)
+    return Boolean((attackableStructureIds || []).find(id => id === this.castle.id))
   }
 }

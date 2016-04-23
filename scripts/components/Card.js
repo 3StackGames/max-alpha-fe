@@ -37,7 +37,6 @@ const dropCollect = (connect, monitor) => ({
 @DragSource(CARD, source, dragCollect)
 export default class Card extends Component {
   render() {
-
     const { state, props } = this
     return props.connectDropTarget(props.connectDragSource(
       <div
@@ -45,6 +44,7 @@ export default class Card extends Component {
           'Card-opponent': props.opponent,
           'Card-hand': props.type === 'hand'
         })}
+        data-card-id={props.id}
         onClick={this.handleClick}
         onMouseOver={this.handleCardMouseOver}
         onMouseOut={this.handleCardMouseOut}>

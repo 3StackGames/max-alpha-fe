@@ -9,9 +9,7 @@ import { phases } from '../utils'
 
 const target = {
   canDrop(props, monitor) {
-    // TODO: Add validation for when you can play a card
-    console.log('tried to drop')
-    return true
+    return props.check.inLocation(props.player, 'hand', monitor.getItem().id)
   },
 
   drop(props, monitor, component) {
@@ -22,7 +20,7 @@ const target = {
 
 const collect = (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver()
+  isOver: monitor.isOver() && monitor.canDrop()
 })
 
 @DropTarget(['CARD', 'STRUCTURE'], target, collect)

@@ -42,7 +42,7 @@ export default class ZoomView extends Component {
             <div className='zoom-attack'>ATK: {card.currentAttack}</div>
           }
           {card.health !== undefined &&
-            <div className='zoom-health'>HP: {card.currentHealth}/{card.health}</div>
+            <div className='zoom-health'>HP: {card.currentHealth}/{card.maxHealth}</div>
           }
         </div>
       </div>,

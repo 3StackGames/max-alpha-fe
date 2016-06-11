@@ -42,17 +42,13 @@ export default class Card extends Component {
       <div
         className={cx('Card', props.className, {
           'Card-opponent': props.opponent,
-          'Card-hand': props.type === 'hand'
+          'Card-hand': props.type === 'hand',
+          'Card--blockable': this.isBlockable
         })}
         data-card-id={props.id}
         onClick={this.handleClick}
         onMouseOver={this.handleCardMouseOver}
         onMouseOut={this.handleCardMouseOut}>
-        {
-          props.combatPair
-            ? this.combatPairNode
-            : null
-        }
         <div
           className={cx('Card-body', {
             'Card-shrink': props.shrink,
@@ -103,6 +99,14 @@ export default class Card extends Component {
     }
   }
 
+  get isBlockable() {
+    const { zoomedCard } = this.props
+    if (!zoomedCard) return false
+
+    const { blockableCreatureIds } = this.props.lookup.card(zoomedCard)
+    return Boolean((blockableCreatureIds || []).find(id => id === this.props.id))
+  }
+
   @autobind
   handleClick(e) {
     if (this.props.onCardClick) {
@@ -123,89 +127,4 @@ export default class Card extends Component {
       this.props.onCardMouseOut(e, this.props.id)
     }
   }
-
-  // get actions() {
-  //   return (
-  //     <div className={cx('Card-actions-wrap', {
-  //       active: this.state.displayActions
-  //     })}>
-  //       <div className='Card-action'>
-  //         Use Effect
-  //       </div>
-  //     </div>
-  //   )
-  // }
-
-  get description() {
-    const { props, tags, text } = this.props.description
-    const tagNodes = tags.map((tag, i) => (
-      <Tag key={i} condition={tag.condition} value={tag.value} />
-    ))
-    return (
-      <div>
-        <span>{props.join(', ')}</span>
-        {tagNodes}
-        <p>{text}</p>
-      </div>
-    )
-  }
-
-  // Need to remake with the game state
-  // get tagOverlayNodes() {
-  //   const { tags } = this.props.abilities
-  //   // get only the first two tags
-  //   const tagKeyNodes = R.take(2, tags)
-  //     .map((tag, i) => {
-  //       return (
-  //         <div key={i} className='Card-overlay-tag'>
-  //           <TagKey condition={tag.condition} />
-  //         </div>
-  //       )
-  //     })
-  //   return (
-  //     <div className='Card-tags-overlay'>
-  //       {tagKeyNodes}
-  //       {
-  //         tags.length > 2
-  //           ? <div style={{textAlign: 'center'}}>...</div>
-  //           : null
-  //       }
-  //     </div>
-  //   )
-  // }
-
-  get combatPairNode() {
-    return (
-      <div className='Card-combat-pair'>
-        {this.props.combatPair}
-      </div>
-    )
-  }
-}
-
-const Tag = ({ condition, value }) => {
-  return (
-    <div>
-      <TagKey condition={condition} />: <span>{value}</span>
-    </div>
-  )
-}
-
-const TagKey = ({ condition }) => {
-  if (condition.keyword) {
-    return (
-      <span className='Card-tag'>{condition.keyword}</span>
-    )
-  }
-
-  const manaNodes = Object.keys(condition).map(color => {
-    return (
-      <ResourceOrb key={color} color={color} cost={condition[color]} />
-    )
-  })
-  return (
-    <span>
-      {manaNodes}
-    </span>
-  )
 }

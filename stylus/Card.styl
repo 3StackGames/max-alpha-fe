@@ -59,13 +59,13 @@
     &:hover
       font-weight: bold
       cursor: pointer
-  
+
   &-shrink
     transform: scale(0.9)
 
   &--zoom
     box-shadow: $card-state-shadow $card-zoom-shadow-color
-  
+
   &--select
     box-shadow: $card-state-shadow $card-select-shadow-color
 
@@ -81,7 +81,7 @@
   &-opponent
     .Card-combat-pair
       order: 2
-  
+
   &-wrap-tags-overlay
     position: relative
     height: 60px
@@ -97,14 +97,14 @@
     margin-bottom: 4px
     padding: 2px 4px
     border-radius: 2px
-  
+
   &-abilities-overlay
     position: absolute
     top: 0
     left: 100%
     width: 100px
     padding-left: 8px
-    
+
   &-ability-item
     width: 100%
     font-size: 12px
@@ -114,9 +114,12 @@
     flex: 1
     padding: 4px
     border: 1px solid gray
-    
+
     &:hover
       cursor: pointer
       border-color: green
       color: green
       width: 150%
+
+  &--blockable
+    border: 3px solid blue

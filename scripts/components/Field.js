@@ -61,6 +61,7 @@ export default class Field extends Component {
           shrink={creatures.length > 6}
           type='field'
           id={card.id}
+          check={this.props.check}
           lookup={this.props.lookup}
           zoomedCard={this.props.ui.zoomedCard}
           zoomState={this.props.ui.zoomedCard === card.id}

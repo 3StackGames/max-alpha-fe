@@ -21,10 +21,20 @@
   animation-timing-function: ease
   animation-duration: 1s
   animation-direction: alternate
-  
+
   &.droppable-area--over
     background-color: transparentify(red, 0.2)
 
 .droppable-area--over
   transition: all 250ms ease
   background-color: #FFFDDA
+
+.Card--droppable
+  animation-name levitate
+  animation-iteration-count: infinite
+  animation-timing-function: ease
+  animation-duration: 1s
+  animation-direction: alternate
+
+  &.Card--blockable
+    box-shadow: 0px 0px 12px 0px transparentify(blue, 0.2)

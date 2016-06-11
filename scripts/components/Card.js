@@ -21,7 +21,9 @@ const dragCollect = (connect, monitor) => ({
 
 const target = {
   canDrop(props, monitor, component) {
-    return true
+    const dropperId = monitor.getItem().id
+    const { blockableCreatureIds } = props.lookup.card(dropperId)
+    return Boolean((blockableCreatureIds || []).find(id => id === props.id))
   },
 
   drop(props, monitor, component) {
@@ -30,7 +32,8 @@ const target = {
 }
 
 const dropCollect = (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget()
+  connectDropTarget: connect.dropTarget(),
+  isOver: monitor.isOver() && monitor.canDrop()
 })
 
 @DropTarget(CARD, target, dropCollect)
@@ -43,6 +46,7 @@ export default class Card extends Component {
         className={cx('Card', props.className, {
           'Card-opponent': props.opponent,
           'Card-hand': props.type === 'hand',
+          'Card--droppable': props.isOver,
           'Card--blockable': this.isBlockable
         })}
         data-card-id={props.id}

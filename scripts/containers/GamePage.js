@@ -7,6 +7,7 @@ import * as uiActs from '../ducks/ui'
 import autobind from 'autobind-decorator'
 import { stateLookups, stateChecks } from '../utils'
 import { GameBoard } from '../components'
+import { Canvas } from '.'
 
 @connect(state => ({
   game: state.game,
@@ -24,7 +25,8 @@ export default class GamePage extends Component {
 
   render() {
     const { props } = this
-    return (
+    return <div>
+      <Canvas />
       <GameBoard
         game={props.game}
         ui={props.ui}
@@ -33,7 +35,7 @@ export default class GamePage extends Component {
         engine={engine}
         lookup={this.lookup}
         check={this.check} />
-    )
+    </div>
   }
 
   get lookup() {

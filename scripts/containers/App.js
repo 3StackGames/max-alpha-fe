@@ -10,11 +10,8 @@ import {
 @DragDropContext(HTML5Backend)
 export default class App extends Component {
   render() {
-    return (
-      <div>
-        {this.props.children}
-        <Canvas />
-      </div>
-    )
+    return <div>
+      {this.props.children}
+    </div>
   }
 }
